@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import com.rogerio.tex.swaply.R;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,7 +23,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-import com.texsoft.calisthenicssingle.R;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +39,7 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
     private static final String TAG_LOG = GoogleLoginFragment.class.getName();
 
     @BindView(R.id.sign_in_button_google)
-    SignInButton signInButtonGoogle;
+    Button signInButtonGoogle;
     @BindView(R.id.disconnect_button_google)
     Button disconnectButtonGoogle;
 
@@ -58,8 +59,10 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
 
     @Override
     protected int getFragmentLayout(){
-        return 1;
+        return R.layout.fragment_google_login;
     }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,22 +78,13 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
                 .build();
         mGoogleApiClient.connect();
     }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_google_login, container, false);
-        ButterKnife.bind(this, view);
-        signInButtonGoogle.setSize(SignInButton.SIZE_STANDARD);
-        signInButtonGoogle.setColorScheme(SignInButton.COLOR_LIGHT);
-        signInButtonGoogle.setOnClickListener(this);
-        setGooglePlusButtonText(signInButtonGoogle, "Accedi con google");
-
-        return view;
-
-
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+      //  signInButtonGoogle.setOnClickListener(this);
+      //  setGooglePlusButtonText(signInButtonGoogle, "Accedi con google");
     }
+
 
     protected void setGooglePlusButtonText(SignInButton signInButton,
                                            String buttonText) {
@@ -177,7 +171,7 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.sign_in_button_google:
-                signIn();
+         //       signIn();
                 break;
             case R.id.disconnect_button_google:
                 break;

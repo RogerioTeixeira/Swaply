@@ -2,11 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.texsoft.calisthenicssingle.fragment.GoogleLoginFragment">
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button_google"
+    tools:context="com.rogerio.tex.swaply.fragment.GoogleLoginFragment">
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="40dp"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:background="@drawable/button_google_gb"
+        android:id="@+id/sign_in_button_google"
+        android:drawableLeft="@drawable/google_plus_icon"
+        android:paddingLeft="10dp"
+        android:text="Accedi con Google"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

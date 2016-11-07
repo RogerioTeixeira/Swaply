@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.texsoft.calisthenicssingle.R;
+import com.rogerio.tex.swaply.R;
 
 import butterknife.ButterKnife;
 
@@ -23,13 +23,15 @@ public abstract class BaseLoginFragment extends Fragment {
     protected abstract int getFragmentLayout();
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(getFragmentLayout(),container,false);
     }
 
-    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
     }
