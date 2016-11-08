@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.AuthCredential;
 import com.rogerio.tex.swaply.R;
 
 import butterknife.ButterKnife;
@@ -52,5 +53,10 @@ public abstract class BaseLoginFragment extends Fragment {
             mProgressDialog.hide();
         }
     }
+
+    public interface LoginCallback {
+        public void onConnected(AuthCredential credential);
+    }
+
 
 }
