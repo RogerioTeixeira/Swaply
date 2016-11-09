@@ -1,0 +1,20 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rogerio.tex.swaply.fragment.TwitterLoginFragment">
+
+    <Button
+        android:id="@+id/sign_in_button_facebook"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/button_twitter_gb"
+        android:drawableLeft="@drawable/twitter_icon"
+        android:paddingLeft="10dp"
+        android:text="Accedi con Twitter"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:visibility="visible" />
+
+
+</FrameLayout>

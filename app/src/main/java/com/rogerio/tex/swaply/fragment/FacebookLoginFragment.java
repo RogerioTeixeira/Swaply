@@ -4,9 +4,9 @@ package com.rogerio.tex.swaply.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -27,7 +27,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class FacebookLoginFragment extends BaseLoginFragment {
-
+    private static final String TAG_LOG = FacebookLoginFragment.class.getName();
 
     @BindView(R.id.sign_in_button_facebook)
     Button signInButtonFacebook;
@@ -36,14 +36,14 @@ public class FacebookLoginFragment extends BaseLoginFragment {
 
     private CallbackManager callbackManager;
     private LoginManager loginManager;
-    private List<String> permission;
     private WeakReference<BaseLoginFragment.LoginCallback> loginCallBack;
 
+
     public FacebookLoginFragment() {
-        // Required empty public constructor
+
     }
 
-    // TODO: Rename and change types and number of parameters
+
     public static FacebookLoginFragment newInstance() {
         FacebookLoginFragment fragment = new FacebookLoginFragment();
         return fragment;
@@ -53,32 +53,29 @@ public class FacebookLoginFragment extends BaseLoginFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getContext());
+
         callbackManager = CallbackManager.Factory.create();
-        permission = new ArrayList<String>();
-        permission.add("email");
         loginManager = LoginManager.getInstance();
         loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(getContext(), "Login riuscito:" + loginResult.getAccessToken().getToken(), Toast.LENGTH_LONG).show();
                 BaseLoginFragment.LoginCallback callback;
                 if (loginCallBack != null && (callback = loginCallBack.get()) != null) {
                     AccessToken accessToken = loginResult.getAccessToken();
                     AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-                    callback.onConnected(credential);
+                    signinFirebase(credential);
                 }
             }
 
             @Override
             public void onCancel() {
-                Toast.makeText(getContext(), "Login cancellato", Toast.LENGTH_LONG).show();
+                Log.v(TAG_LOG, "Login facebook cancel");
 
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(getContext(), "Login ko:" + error.getMessage(), Toast.LENGTH_LONG).show();
-
+                Log.e(TAG_LOG, "Login facebook error", error);
             }
         });
 
@@ -129,6 +126,14 @@ public class FacebookLoginFragment extends BaseLoginFragment {
     }
 
     public void signinFacebook() {
+        List<String> permission = new ArrayList<String>();
+        permission.add("email");
         loginManager.logInWithReadPermissions(this, permission);
     }
+
+    public void signOutFacebook() {
+        loginManager.logOut();
+        signOutFirebase();
+    }
+
 }
