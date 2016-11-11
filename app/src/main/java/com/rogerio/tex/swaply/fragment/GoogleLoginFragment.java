@@ -1,39 +1,33 @@
 package com.rogerio.tex.swaply.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import com.rogerio.tex.swaply.R;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.rogerio.tex.swaply.R;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
 public class GoogleLoginFragment extends BaseLoginFragment implements
-        GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks,
-        View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int RC_SIGN_IN = 0;
     private static final String TAG_LOG = GoogleLoginFragment.class.getName();
@@ -44,12 +38,12 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
     Button disconnectButtonGoogle;
 
 
- //   private OnFragmentInteractionListener mListener;
+
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInOptions gso;
 
     public GoogleLoginFragment() {
-        // Required empty public constructor
+
     }
 
     public static GoogleLoginFragment newInstance() {
@@ -59,8 +53,29 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
 
     @Override
     protected int getFragmentLayout(){
+
         return R.layout.fragment_google_login;
     }
+
+    // implemetazione GoogleApiClient.ConnectionCallbacks
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.v("ApiclientTest", "onConneted");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.v("ApiclientTest", "Suspend");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.v("ApiclientTest", "failed:" + connectionResult.hasResolution());
+
+
+    }
+    // fine GoogleApiClient.ConnectionCallbacks
 
 
     @Override
@@ -68,64 +83,27 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
         super.onCreate(savedInstanceState);
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.PLUS_LOGIN))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage(getActivity(), this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .enableAutoManage(getActivity(), this)
                 .addConnectionCallbacks(this)
                 .build();
-        mGoogleApiClient.connect();
     }
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-      //  signInButtonGoogle.setOnClickListener(this);
-      //  setGooglePlusButtonText(signInButtonGoogle, "Accedi con google");
-    }
-
-
-    protected void setGooglePlusButtonText(SignInButton signInButton,
-                                           String buttonText) {
-        for (int i = 0; i < signInButton.getChildCount(); i++) {
-            View v = signInButton.getChildAt(i);
-
-            if (v instanceof TextView) {
-                TextView tv = (TextView) v;
-                tv.setTextSize(15);
-                tv.setTypeface(null, Typeface.BOLD);
-                tv.setText(buttonText);
-                return;
-            }
-        }
+    public void onStart() {
+        super.onStart();
+        //   mGoogleApiClient.connect();
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onStop() {
+        super.onStop();
+        // mGoogleApiClient.disconnect();
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.v(TAG_LOG, "Connessione API google fallita");
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.v(TAG_LOG, "Connessione API google ok");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.v(TAG_LOG, "Connessione API google sospesa");
-    }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -133,11 +111,10 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                updateStateButton(true);
-
-            } else {
-                Log.v(TAG_LOG, "Autenticazione google ko:" + result.getStatus().getStatusMessage());
-                updateStateButton(false);
+                GoogleSignInAccount account = result.getSignInAccount();
+                Log.v("Verifica", "Token:" + account.getIdToken());
+                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                signinFirebase(credential);
             }
         }
     }
@@ -171,7 +148,7 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.sign_in_button_google:
-         //       signIn();
+                signIn();
                 break;
             case R.id.disconnect_button_google:
                 break;

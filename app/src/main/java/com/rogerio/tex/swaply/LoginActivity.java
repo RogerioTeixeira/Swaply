@@ -10,23 +10,26 @@ import android.util.Log;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.rogerio.tex.swaply.fragment.BaseLoginFragment;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
 
 
 public class LoginActivity extends AppCompatActivity implements BaseLoginFragment.LoginCallback {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_login_twitter);
-        if (fragment != null) {
-            fragment.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_login_twitter);
+            if (fragment != null) {
+                fragment.onActivityResult(requestCode, resultCode, data);
+            }
         }
     }
 

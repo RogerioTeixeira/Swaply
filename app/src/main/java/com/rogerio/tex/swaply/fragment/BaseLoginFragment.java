@@ -6,10 +6,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -73,6 +73,13 @@ public abstract class BaseLoginFragment extends Fragment {
         }
     }
 
+    public LoginCallback getCallback() {
+        if (loginCallBackRef != null) {
+            return loginCallBackRef.get();
+        }
+        return null;
+    }
+
 
     protected void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -96,12 +103,13 @@ public abstract class BaseLoginFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            Toast.makeText(getContext(), "login success", Toast.LENGTH_SHORT).show();
                             LoginCallback activityCallback;
-                            if (loginCallBackRef != null && (activityCallback = loginCallBackRef.get()) != null) {
+                            if ((activityCallback = getCallback()) != null) {
                                 activityCallback.onConnected(task);
                             }
                         } else {
-                            Log.v("Login", "Chiamata firebase auth ko");
+                            Toast.makeText(getContext(), "login ko", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="facebook_app_id">364345243904696</string>
+    <string name="twitter_key">vN1aPHy2T0Y8O4S6L58D6bktc</string>
+    <string name="twitter_secret">91MPS4g3wmHcWz1WdjHiN4ifxMDHXvgNmCTYuTMBR07ixXICwU</string>
 </resources>

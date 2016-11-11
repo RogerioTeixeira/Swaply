@@ -1,7 +1,5 @@
 package com.rogerio.tex.swaply.fragment;
 
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,19 +50,17 @@ public class FacebookLoginFragment extends BaseLoginFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getContext());
 
+        FacebookSdk.sdkInitialize(getContext());
         callbackManager = CallbackManager.Factory.create();
         loginManager = LoginManager.getInstance();
         loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                BaseLoginFragment.LoginCallback callback;
-                if (loginCallBack != null && (callback = loginCallBack.get()) != null) {
-                    AccessToken accessToken = loginResult.getAccessToken();
-                    AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-                    signinFirebase(credential);
-                }
+                AccessToken accessToken = loginResult.getAccessToken();
+                AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
+                signinFirebase(credential);
+
             }
 
             @Override
@@ -82,24 +78,6 @@ public class FacebookLoginFragment extends BaseLoginFragment {
 
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof BaseLoginFragment.LoginCallback) {
-            BaseLoginFragment.LoginCallback mLoginCallback = (BaseLoginFragment.LoginCallback) context;
-            loginCallBack = new WeakReference<LoginCallback>(mLoginCallback);
-        }
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        if (loginCallBack != null) {
-            loginCallBack.clear();
-            loginCallBack = null;
-        }
-    }
 
     @Override
     protected int getFragmentLayout() {
