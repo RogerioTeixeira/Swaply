@@ -61,17 +61,17 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.v("ApiclientTest", "onConneted");
+
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.v("ApiclientTest", "Suspend");
+
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.v("ApiclientTest", "failed:" + connectionResult.hasResolution());
+        Log.v(TAG_LOG, "Connection google api failed. Error code:" + connectionResult.getErrorCode());
 
 
     }
@@ -81,28 +81,32 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v("ApiclientTest", "Creata finestra");
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .enableAutoManage(getActivity(), this)
                 .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .build();
     }
     @Override
     public void onStart() {
         super.onStart();
+        // Log.v("ApiclientTest", "Connessione");
         //   mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // mGoogleApiClient.disconnect();
+        //   Log.v("ApiclientTest", "Disconnect");
+        //    mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -154,4 +158,6 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
                 break;
         }
     }
+
+
 }
