@@ -59,7 +59,7 @@ public class FacebookLoginFragment extends BaseLoginFragment {
             public void onSuccess(LoginResult loginResult) {
                 AccessToken accessToken = loginResult.getAccessToken();
                 AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-                signinFirebase(credential);
+                signInFirebase(credential);
 
             }
 

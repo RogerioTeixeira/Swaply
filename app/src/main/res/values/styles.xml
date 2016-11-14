@@ -15,4 +15,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="textbold" parent="@android:style/TextAppearance">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="textnormal" parent="@android:style/TextAppearance">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 </resources>

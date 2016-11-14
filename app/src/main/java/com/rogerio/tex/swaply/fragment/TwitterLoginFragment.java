@@ -90,7 +90,7 @@ public class TwitterLoginFragment extends BaseLoginFragment {
                 TwitterSession session = twitterSessionResult.data;
                 AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token,
                         session.getAuthToken().secret);
-                signinFirebase(credential);
+                signInFirebase(credential);
             }
 
             @Override

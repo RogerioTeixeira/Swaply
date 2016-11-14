@@ -32,21 +32,10 @@
             android:name="com.rogerio.tex.swaply.fragment.FacebookLoginFragment"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/fragment_login_google"
-            android:layout_alignLeft="@+id/fragment_login_google"
-            android:layout_alignStart="@+id/fragment_login_google"
-            android:layout_marginBottom="11dp"
-            tools:layout="@layout/fragment_facebook_login" />
-
-        <fragment
-            android:id="@+id/fragment_login_google"
-            android:name="com.rogerio.tex.swaply.fragment.GoogleLoginFragment"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="65dp"
-            tools:layout="@layout/fragment_google_login" />
+            android:layout_marginBottom="185dp"
+            tools:layout="@layout/fragment_facebook_login" />
 
         <fragment
             android:id="@+id/fragment_login_twitter"
@@ -56,8 +45,30 @@
             android:layout_above="@+id/fragment_login_facebook"
             android:layout_alignLeft="@+id/fragment_login_facebook"
             android:layout_alignStart="@+id/fragment_login_facebook"
-            android:layout_marginBottom="11dp"
+            android:layout_marginBottom="22dp"
             tools:layout="@layout/fragment_twitter_login" />
+
+        <fragment
+            android:id="@+id/fragment_login_google"
+            android:name="com.rogerio.tex.swaply.fragment.GoogleLoginFragment"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/fragment_login_twitter"
+            android:layout_alignLeft="@+id/fragment_login_twitter"
+            android:layout_alignStart="@+id/fragment_login_twitter"
+            android:layout_marginBottom="24dp"
+            tools:layout="@layout/fragment_google_login" />
+
+        <fragment
+            android:id="@+id/fragment_login_anonymously"
+            android:name="com.rogerio.tex.swaply.fragment.AnonymouslyLoginFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/fragment_login_facebook"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/fragment_login_facebook"
+            tools:layout="@layout/fragment_anonymously_login" />
+
 
     </RelativeLayout>
 

@@ -23,7 +23,7 @@ import java.lang.ref.WeakReference;
 import butterknife.ButterKnife;
 
 
-public abstract class BaseLoginFragment extends Fragment {
+public abstract class BaseLoginFragment extends Fragment implements OnCompleteListener<AuthResult> {
     private ProgressDialog mProgressDialog;
     private FirebaseAuth mAuth;
     private WeakReference<LoginCallback> loginCallBackRef;
@@ -34,7 +34,9 @@ public abstract class BaseLoginFragment extends Fragment {
 
     protected abstract int getFragmentLayout();
 
-
+    public FirebaseAuth getFirebaseAuth() {
+        return mAuth;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,22 +99,27 @@ public abstract class BaseLoginFragment extends Fragment {
         }
     }
 
-    public void signinFirebase(final AuthCredential credential) {
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "login success", Toast.LENGTH_SHORT).show();
-                            LoginCallback activityCallback;
-                            if ((activityCallback = getCallback()) != null) {
-                                activityCallback.onConnected(task);
-                            }
-                        } else {
-                            Toast.makeText(getContext(), "login ko", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    public void signInFirebase(final AuthCredential credential) {
+        mAuth.signInWithCredential(credential).addOnCompleteListener(getActivity(), this);
+    }
+
+    @Override
+    public void onComplete(@NonNull Task<AuthResult> task) {
+        hideProgressDialog();
+        if (task.isSuccessful()) {
+            Toast.makeText(getContext(), "login success", Toast.LENGTH_SHORT).show();
+            LoginCallback activityCallback;
+            if ((activityCallback = getCallback()) != null) {
+                activityCallback.onConnected(task);
+            }
+        } else {
+            Toast.makeText(getContext(), "login ko", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void signInAnonymous() {
+        showProgressDialog();
+        mAuth.signInAnonymously().addOnCompleteListener(this);
     }
 
     public void signOutFirebase() {

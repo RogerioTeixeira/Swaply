@@ -118,7 +118,7 @@ public class GoogleLoginFragment extends BaseLoginFragment implements
                 GoogleSignInAccount account = result.getSignInAccount();
                 Log.v("Verifica", "Token:" + account.getIdToken());
                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                signinFirebase(credential);
+                signInFirebase(credential);
             }
         }
     }
