@@ -4,4 +4,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="menu_category">Categoria</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_transaction">Proposte</string>
+    <string name="menu_mygame">Miei giochi</string>
+    <string name="menu_exit">Esci</string>
 </resources>
