@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 
 import butterknife.BindView;
 
+
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.toolbar)
