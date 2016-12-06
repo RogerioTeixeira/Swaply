@@ -28,10 +28,20 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     private static final int RC_SIGN_IN = 20;
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInOptions gso;
-    private AuthCallback mCallback;
 
     public GoogleProvider(FragmentActivity activity) {
         super(activity);
+        initGoogleService();
+
+    }
+
+    public GoogleProvider(FragmentActivity activity, AuthCallback authCallback) {
+        super(activity, authCallback);
+        initGoogleService();
+    }
+
+    private void initGoogleService() {
+        FragmentActivity activity = weakActivity.get();
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .requestIdToken(activity.getString(R.string.default_web_client_id))
@@ -59,29 +69,27 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess() && mCallback != null) {
+            if (result.isSuccess() && weakAuthCallback != null) {
+                AuthCallback mAuthCallback = weakAuthCallback.get();
                 GoogleSignInAccount account = result.getSignInAccount();
                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                mCallback.onSuccess(credential);
+                mAuthCallback.onSuccess(credential);
             }
         }
     }
 
     @Override
-    public void startLogin(Activity activity) {
+    public void startLogin() {
+        Activity activity = weakActivity.get();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         activity.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
-    public void setAuthenticationCallback(AuthCallback callback) {
-        mCallback = callback;
-    }
-
-    @Override
     public void onStop() {
-
+        onDestroy();
+        mGoogleApiClient.disconnect();
     }
 
 

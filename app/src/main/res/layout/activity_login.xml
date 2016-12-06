@@ -27,47 +27,62 @@
             android:textSize="30sp"
             android:textStyle="bold" />
 
-        <fragment
-            android:id="@+id/fragment_login_facebook"
-            android:name="com.rogerio.tex.swaply.fragment.FacebookLoginFragment"
+        <Button
+            android:id="@+id/sign_in_button_facebook"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="185dp"
-            tools:layout="@layout/fragment_facebook_login" />
+            android:background="@drawable/button_fb_gb"
+            android:drawableLeft="@drawable/facebook_icon"
+            android:paddingLeft="10dp"
+            android:text="Accedi con facebook"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
 
-        <fragment
-            android:id="@+id/fragment_login_twitter"
-            android:name="com.rogerio.tex.swaply.fragment.TwitterLoginFragment"
+        <Button
+            android:id="@+id/sign_in_button_twitter"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/fragment_login_facebook"
-            android:layout_alignLeft="@+id/fragment_login_facebook"
-            android:layout_alignStart="@+id/fragment_login_facebook"
+            android:layout_height="40dp"
+            android:layout_above="@+id/sign_in_button_facebook"
+            android:layout_alignLeft="@+id/sign_in_button_facebook"
+            android:layout_alignStart="@+id/sign_in_button_facebook"
             android:layout_marginBottom="22dp"
-            tools:layout="@layout/fragment_twitter_login" />
+            android:background="@drawable/button_twitter_gb"
+            android:drawableLeft="@drawable/twitter_icon"
+            android:paddingLeft="10dp"
+            android:text="Accedi con Twitter"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
 
-        <fragment
-            android:id="@+id/fragment_login_google"
-            android:name="com.rogerio.tex.swaply.fragment.GoogleLoginFragment"
+        <Button
+            android:id="@+id/sign_in_button_google"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/fragment_login_twitter"
-            android:layout_alignLeft="@+id/fragment_login_twitter"
-            android:layout_alignStart="@+id/fragment_login_twitter"
+            android:layout_height="40dp"
+            android:layout_above="@+id/sign_in_button_twitter"
+            android:layout_alignLeft="@+id/sign_in_button_twitter"
+            android:layout_alignStart="@+id/sign_in_button_twitter"
             android:layout_marginBottom="24dp"
-            tools:layout="@layout/fragment_google_login" />
+            android:background="@drawable/button_google_gb"
+            android:drawableLeft="@drawable/google_plus_icon"
+            android:paddingLeft="10dp"
+            android:text="Accedi con Google"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
 
-        <fragment
-            android:id="@+id/fragment_login_anonymously"
-            android:name="com.rogerio.tex.swaply.fragment.AnonymouslyLoginFragment"
+        <Button
+            android:id="@+id/button_skip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/fragment_login_facebook"
+            android:layout_alignEnd="@+id/sign_in_button_facebook"
             android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/fragment_login_facebook"
-            tools:layout="@layout/fragment_anonymously_login" />
+            android:layout_alignRight="@+id/sign_in_button_facebook"
+            android:background="@android:color/transparent"
+            android:text="Salta"
+            android:textColor="@color/button_transparent" />
 
 
     </RelativeLayout>
