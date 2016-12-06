@@ -2,7 +2,7 @@ package com.rogerio.tex.swaply.provider;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthCredential;
 
@@ -14,14 +14,14 @@ import java.lang.ref.WeakReference;
 
 public abstract class AuthProvider {
 
-    protected WeakReference<FragmentActivity> weakActivity;
+    protected WeakReference<AppCompatActivity> weakActivity;
     protected WeakReference<AuthCallback> weakAuthCallback;
 
-    public AuthProvider(FragmentActivity activity) {
-        weakActivity = new WeakReference<FragmentActivity>(activity);
+    public AuthProvider(AppCompatActivity activity) {
+        weakActivity = new WeakReference<AppCompatActivity>(activity);
     }
 
-    public AuthProvider(FragmentActivity activity, AuthCallback authCallback) {
+    public AuthProvider(AppCompatActivity activity, AuthCallback authCallback) {
         this(activity);
         weakAuthCallback = new WeakReference<AuthCallback>(authCallback);
     }

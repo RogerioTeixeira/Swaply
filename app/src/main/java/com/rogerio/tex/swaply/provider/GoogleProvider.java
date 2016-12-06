@@ -3,7 +3,7 @@ package com.rogerio.tex.swaply.provider;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
@@ -29,19 +29,19 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInOptions gso;
 
-    public GoogleProvider(FragmentActivity activity) {
+    public GoogleProvider(AppCompatActivity activity) {
         super(activity);
         initGoogleService();
 
     }
 
-    public GoogleProvider(FragmentActivity activity, AuthCallback authCallback) {
+    public GoogleProvider(AppCompatActivity activity, AuthCallback authCallback) {
         super(activity, authCallback);
         initGoogleService();
     }
 
     private void initGoogleService() {
-        FragmentActivity activity = weakActivity.get();
+        AppCompatActivity activity = weakActivity.get();
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .requestIdToken(activity.getString(R.string.default_web_client_id))
