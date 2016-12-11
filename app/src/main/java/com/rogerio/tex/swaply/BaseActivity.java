@@ -22,6 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void showProgressDialog() {
         if (mProgressDialog == null) {
+            hideProgressDialog();
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
@@ -32,8 +33,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
+            mProgressDialog.dismiss();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        hideProgressDialog();
     }
 
 
