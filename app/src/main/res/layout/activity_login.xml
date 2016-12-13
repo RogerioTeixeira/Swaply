@@ -28,37 +28,6 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/sign_in_button_facebook"
-            android:layout_width="300dp"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="185dp"
-            android:background="@drawable/button_fb_gb"
-            android:drawableLeft="@drawable/facebook_icon"
-            android:paddingLeft="10dp"
-            android:text="Accedi con facebook"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:visibility="visible" />
-
-        <Button
-            android:id="@+id/sign_in_button_twitter"
-            android:layout_width="300dp"
-            android:layout_height="40dp"
-            android:layout_above="@+id/sign_in_button_facebook"
-            android:layout_alignLeft="@+id/sign_in_button_facebook"
-            android:layout_alignStart="@+id/sign_in_button_facebook"
-            android:layout_marginBottom="22dp"
-            android:background="@drawable/button_twitter_gb"
-            android:drawableLeft="@drawable/twitter_icon"
-            android:paddingLeft="10dp"
-            android:text="Accedi con Twitter"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:visibility="visible" />
-
-        <Button
             android:id="@+id/sign_in_button_google"
             android:layout_width="300dp"
             android:layout_height="40dp"
@@ -74,6 +43,53 @@
             android:textColor="@android:color/white" />
 
         <Button
+            android:id="@+id/sign_in_button_twitter"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_above="@+id/sign_in_button_facebook"
+            android:layout_alignLeft="@+id/sign_in_button_facebook"
+            android:layout_alignStart="@+id/sign_in_button_facebook"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/button_twitter_gb"
+            android:drawableLeft="@drawable/twitter_icon"
+            android:paddingLeft="10dp"
+            android:text="Accedi con Twitter"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/sign_in_button_facebook"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_above="@+id/button_skip"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="137dp"
+            android:background="@drawable/button_fb_gb"
+            android:drawableLeft="@drawable/facebook_icon"
+            android:paddingLeft="10dp"
+            android:text="Accedi con facebook"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/sign_in_button_email"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/sign_in_button_facebook"
+            android:layout_alignStart="@+id/sign_in_button_facebook"
+            android:layout_below="@+id/sign_in_button_twitter"
+            android:layout_marginTop="65dp"
+            android:background="@drawable/button_email_gb"
+            android:drawableLeft="@drawable/email"
+            android:paddingLeft="10dp"
+            android:text="Accedi con email"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <Button
             android:id="@+id/button_skip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,7 +99,6 @@
             android:background="@android:color/transparent"
             android:text="Salta"
             android:textColor="@color/button_transparent" />
-
 
     </RelativeLayout>
 
