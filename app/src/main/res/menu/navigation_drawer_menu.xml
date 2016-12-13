@@ -5,11 +5,11 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/menu_home"
-            android:icon="@drawable/ic_home"
+            android:icon="@drawable/house"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/menu_category"
-            android:icon="@drawable/ic_category"
+            android:icon="@drawable/gridcategory"
             android:title="@string/menu_category" />
         <item
             android:id="@+id/menu_transaction"
