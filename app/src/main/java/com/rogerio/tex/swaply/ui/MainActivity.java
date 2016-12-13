@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply;
+package com.rogerio.tex.swaply.ui;
 
 
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.rogerio.tex.swaply.R;
 
 import butterknife.BindView;
 

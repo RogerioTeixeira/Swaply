@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply;
+package com.rogerio.tex.swaply.ui;
 
 
 import android.content.Intent;
@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.provider.AuthProvider;
 import com.rogerio.tex.swaply.provider.FacebookProvider;
 import com.rogerio.tex.swaply.provider.GoogleProvider;

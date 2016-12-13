@@ -1,8 +1,10 @@
-package com.rogerio.tex.swaply;
+package com.rogerio.tex.swaply.ui;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.rogerio.tex.swaply.R;
 
 import butterknife.ButterKnife;
 

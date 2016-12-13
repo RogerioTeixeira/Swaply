@@ -4,7 +4,8 @@
     android:id="@+id/activity_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rogerio.tex.swaply.LoginActivity">
+
+    tools:context="com.rogerio.tex.swaply.ui.LoginActivity">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
