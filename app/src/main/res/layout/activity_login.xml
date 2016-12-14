@@ -12,9 +12,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/background" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <RelativeLayout style="@style/WrapperStyle">
 
         <TextView
             android:id="@+id/label_login"
