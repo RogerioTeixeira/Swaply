@@ -19,6 +19,8 @@ import butterknife.BindView;
 
 public class EmailAuthActivity extends BaseActivity {
 
+    private static final int INDEX_TAB_LOGIN = 0;
+    private static final int INDEX_TAB_CREATE = 1;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tablayout)
@@ -37,6 +39,25 @@ public class EmailAuthActivity extends BaseActivity {
         adapter.addFragment(new EmailLoginFragment(), "Crea Account");
         pager.setAdapter(adapter);
         tablayout.setupWithViewPager(pager);
+        setToobarTitle(tablayout.getSelectedTabPosition());
+        tablayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                setToobarTitle(tab.getPosition());
+            }
+        });
+
+    }
+
+    public void setToobarTitle(int tabIdex) {
+        switch (tabIdex) {
+            case INDEX_TAB_LOGIN:
+                getSupportActionBar().setTitle(getResources().getString(R.string.title_toolbar_login));
+                break;
+            case INDEX_TAB_CREATE:
+                getSupportActionBar().setTitle(getResources().getString(R.string.title_toolbar_create));
+                break;
+        }
 
     }
 
