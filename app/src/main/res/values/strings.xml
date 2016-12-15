@@ -12,4 +12,8 @@
     <string name="menu_transaction">Proposte</string>
     <string name="menu_mygame">Miei giochi</string>
     <string name="menu_exit">Esci</string>
+
+    <string name="email_input">Email</string>
+    <string name="password_input">Password</string>
+
 </resources>
