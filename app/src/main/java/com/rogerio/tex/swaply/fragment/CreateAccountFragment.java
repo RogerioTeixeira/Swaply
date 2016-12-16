@@ -8,16 +8,15 @@ import com.rogerio.tex.swaply.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EmailLoginFragment extends BaseLoginFragment {
+public class CreateAccountFragment extends BaseFragment {
 
-
-    public EmailLoginFragment() {
+    public CreateAccountFragment() {
         // Required empty public constructor
     }
 
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_email_login;
+        return R.layout.fragment_create_account;
     }
 
 }

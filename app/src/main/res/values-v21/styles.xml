@@ -8,7 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorHint">@color/color_edit_text</item>
-        <item name="android:colorButtonNormal">@color/button_normal</item>
         <item name="android:buttonStyle">@style/ButtonStyle</item>
         <item name="editTextStyle">@style/EditTextStyle</item>
         <item name="android:windowBackground">@color/color_grey_200</item>

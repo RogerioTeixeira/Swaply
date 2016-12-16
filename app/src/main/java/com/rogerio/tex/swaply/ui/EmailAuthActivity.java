@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.fragment.CreateAccountFragment;
 import com.rogerio.tex.swaply.fragment.EmailLoginFragment;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class EmailAuthActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new EmailLoginFragment(), "Accedi");
-        adapter.addFragment(new EmailLoginFragment(), "Crea Account");
+        adapter.addFragment(new CreateAccountFragment(), "Crea Account");
         pager.setAdapter(adapter);
         tablayout.setupWithViewPager(pager);
         setToobarTitle(tablayout.getSelectedTabPosition());

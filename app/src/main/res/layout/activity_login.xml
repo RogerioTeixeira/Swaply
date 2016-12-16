@@ -16,11 +16,12 @@
 
         <TextView
             android:id="@+id/label_login"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="97dp"
+            android:layout_marginTop="90dp"
+            android:gravity="center"
             android:text="Benvenuti in Swaply"
             android:textColor="@android:color/white"
             android:textSize="30sp"
@@ -28,77 +29,56 @@
 
         <Button
             android:id="@+id/sign_in_button_google"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_above="@+id/sign_in_button_twitter"
-            android:layout_alignLeft="@+id/sign_in_button_twitter"
-            android:layout_alignStart="@+id/sign_in_button_twitter"
-            android:layout_marginBottom="24dp"
+            android:layout_below="@+id/label_login"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
             android:background="@drawable/button_google_gb"
             android:drawableLeft="@drawable/google_plus_icon"
-            android:paddingLeft="10dp"
-            android:text="Accedi con Google"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white" />
+            android:text="@string/label_button_login_google" />
 
         <Button
             android:id="@+id/sign_in_button_twitter"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_above="@+id/sign_in_button_facebook"
-            android:layout_alignLeft="@+id/sign_in_button_facebook"
-            android:layout_alignStart="@+id/sign_in_button_facebook"
-            android:layout_marginBottom="24dp"
+            android:layout_below="@+id/sign_in_button_google"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/distance_between_button"
             android:background="@drawable/button_twitter_gb"
             android:drawableLeft="@drawable/twitter_icon"
-            android:paddingLeft="10dp"
-            android:text="Accedi con Twitter"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:visibility="visible" />
+            android:text="@string/label_button_login_twitter" />
 
         <Button
             android:id="@+id/sign_in_button_facebook"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_above="@+id/button_skip"
+            android:layout_below="@+id/sign_in_button_twitter"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="137dp"
+            android:layout_marginTop="@dimen/distance_between_button"
             android:background="@drawable/button_fb_gb"
             android:drawableLeft="@drawable/facebook_icon"
-            android:paddingLeft="10dp"
-            android:text="Accedi con facebook"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:visibility="visible" />
+            android:text="@string/label_button_login_facebook" />
 
         <Button
             android:id="@+id/sign_in_button_email"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignLeft="@+id/sign_in_button_facebook"
-            android:layout_alignStart="@+id/sign_in_button_facebook"
-            android:layout_below="@+id/sign_in_button_twitter"
-            android:layout_marginTop="65dp"
-            android:background="@drawable/button_email_gb"
+            android:layout_below="@+id/sign_in_button_facebook"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/distance_between_button"
+            android:background="@drawable/button_default"
             android:drawableLeft="@drawable/email"
-            android:paddingLeft="10dp"
-            android:text="Accedi con email"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:visibility="visible" />
+            android:text="@string/label_button_login_mail" />
 
         <Button
             android:id="@+id/button_skip"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/sign_in_button_facebook"
             android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/sign_in_button_facebook"
-            android:background="@android:color/transparent"
-            android:text="Salta"
-            android:textColor="@color/button_transparent" />
-
+            android:layout_alignParentRight="true"
+            android:text="@string/label_button_login_skip" />
     </RelativeLayout>
 
 </FrameLayout>

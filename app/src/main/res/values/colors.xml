@@ -5,7 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="color_grey_200">#eeeeee</color>
 
-    <color name="button_normal">#f44336</color>
     <color name="color_edit_text">#212121</color>
 
     <color name="material_green_50">#E8F5E9</color>
@@ -14,4 +13,14 @@
     <color name="material_green_a200">#69F0AE</color>
     <color name="material_lime_a700">#AEEA00</color>
     <color name="material_purple_a700">#AA00FF</color>
+
+
+    <color name="button_default">#66bb6a</color>
+    <color name="button_default_pressed">#a5d6a7</color>
+
+    <color name="button_facebook">#3b5998</color>
+    <color name="button_facebook_pressed">#6d84b4</color>
+
+    <color name="button_google">#dd4b39</color>
+    <color name="button_google_pressed">#ef5350</color>
 </resources>

@@ -15,11 +15,18 @@
 
     <string name="email_input">Email</string>
     <string name="password_input">Password</string>
+    <string name="name_input">Nome</string>
 
     <string name="title_toolbar_create">Crea nuovo account</string>
     <string name="title_toolbar_login">Accedi</string>
 
     <string name="button_login">Accedi</string>
     <string name="button_create">Registrati</string>
+
+    <string name="label_button_login_google">Accedi con Google</string>
+    <string name="label_button_login_facebook">Accedi con Facebook</string>
+    <string name="label_button_login_twitter">Accedi con Twitter</string>
+    <string name="label_button_login_mail">Accedi con Mail</string>
+    <string name="label_button_login_skip">Salta</string>
 
 </resources>
