@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui;
+package com.rogerio.tex.swaply.ui.auth;
 
 
 import android.content.Intent;
@@ -22,6 +22,7 @@ import com.rogerio.tex.swaply.provider.AuthProvider;
 import com.rogerio.tex.swaply.provider.FacebookProvider;
 import com.rogerio.tex.swaply.provider.GoogleProvider;
 import com.rogerio.tex.swaply.provider.TwitterProvider;
+import com.rogerio.tex.swaply.ui.BaseActivity;
 
 import java.util.HashMap;
 

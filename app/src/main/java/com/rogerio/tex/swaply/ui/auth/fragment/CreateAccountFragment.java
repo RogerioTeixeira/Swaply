@@ -1,9 +1,10 @@
-package com.rogerio.tex.swaply.fragment;
+package com.rogerio.tex.swaply.ui.auth.fragment;
 
 
 import android.support.v4.app.Fragment;
 
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.fragment.BaseFragment;
 
 /**
  * A simple {@link Fragment} subclass.

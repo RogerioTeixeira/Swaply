@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui;
+package com.rogerio.tex.swaply.ui.auth;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -10,8 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.fragment.CreateAccountFragment;
-import com.rogerio.tex.swaply.fragment.EmailLoginFragment;
+import com.rogerio.tex.swaply.ui.BaseActivity;
+import com.rogerio.tex.swaply.ui.auth.fragment.CreateAccountFragment;
+import com.rogerio.tex.swaply.ui.auth.fragment.EmailLoginFragment;
 
 import java.util.ArrayList;
 import java.util.List;

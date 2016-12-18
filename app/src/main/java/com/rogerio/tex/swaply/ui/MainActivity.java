@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.ui.auth.LoginActivity;
 
 import butterknife.BindView;
 
