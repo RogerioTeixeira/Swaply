@@ -1,32 +1,24 @@
 package com.rogerio.tex.swaply.util.validator;
 
-import android.support.design.widget.TextInputLayout;
-
-import com.rogerio.tex.swaply.R;
 
 /**
  * Created by rogerio on 18/12/2016.
  */
 
-public class PasswordValidator extends BaseValidator {
+public class PasswordValidator extends TextValidator {
+    private int mMinLen;
 
-    public PasswordValidator(TextInputLayout container) {
-        super(container);
+    public PasswordValidator(String messageError, int minlen) {
+        super(messageError);
+        mMinLen = minlen;
+
     }
-
     @Override
-    public String getErrorMessage() {
-        return getContainer().getResources().getString(R.string.validate_error_invalid_password);
-    }
-
-    @Override
-    public String getEmptyMessage() {
-        return getContainer().getResources().getString(R.string.validate_error_missing_password);
-    }
-
-    @Override
-    protected boolean isValidate(CharSequence charSequence) {
-        return charSequence.length() >= 6;
+    public void validate(CharSequence charSequence) throws ValidationException {
+        super.validate(charSequence);
+        if (charSequence.length() < mMinLen) {
+            throw new ValidationException(mMessageError);
+        }
 
     }
 

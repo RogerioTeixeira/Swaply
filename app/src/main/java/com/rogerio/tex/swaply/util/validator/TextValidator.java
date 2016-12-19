@@ -1,23 +1,24 @@
 package com.rogerio.tex.swaply.util.validator;
 
-import android.util.Patterns;
+import android.text.TextUtils;
+
 
 /**
  * Created by rogerio on 18/12/2016.
  */
 
-public class EmailValidator extends TextValidator {
+public class TextValidator implements IValidator<CharSequence> {
 
-    public EmailValidator(String messageError) {
-        super(messageError);
+    protected String mMessageError;
+
+    public TextValidator(String messageError) {
+        mMessageError = messageError;
     }
+
     @Override
     public void validate(CharSequence charSequence) throws ValidationException {
-        super.validate(charSequence);
-        if (!Patterns.EMAIL_ADDRESS.matcher(charSequence).matches()) {
+        if (TextUtils.isEmpty(charSequence)) {
             throw new ValidationException(mMessageError);
         }
-
     }
-
 }

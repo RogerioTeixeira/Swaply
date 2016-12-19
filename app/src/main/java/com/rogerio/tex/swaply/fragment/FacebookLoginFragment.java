@@ -81,7 +81,6 @@ public class FacebookLoginFragment extends BaseLoginFragment {
 
     @Override
     protected int getFragmentLayout() {
-
         return R.layout.fragment_facebook_login;
     }
 

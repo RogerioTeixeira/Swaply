@@ -7,9 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.fragment.BaseLoginFragment;
+import com.rogerio.tex.swaply.util.FormValidation;
 import com.rogerio.tex.swaply.util.validator.EmailValidator;
 import com.rogerio.tex.swaply.util.validator.PasswordValidator;
 
@@ -33,8 +35,8 @@ public class EmailLoginFragment extends BaseLoginFragment {
     @BindView(R.id.btn_accedi)
     Button btnAccedi;
 
-    private EmailValidator mEmailValidator;
-    private PasswordValidator mPasswordValidator;
+    private FormValidation mFormValidation;
+
 
     public EmailLoginFragment() {
         // Required empty public constructor
@@ -48,13 +50,21 @@ public class EmailLoginFragment extends BaseLoginFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mEmailValidator = new EmailValidator(inputLayoutEmail);
-        mPasswordValidator = new PasswordValidator(inputLayoutPassword);
+        String msgErrorMail = getResources().getString(R.string.validate_error_invalid_email);
+        String msgErrorPassword = getResources().getString(R.string.validate_error_invalid_password);
+        mFormValidation = new FormValidation();
+        mFormValidation.addValidationRule(new EmailValidator(msgErrorMail), inputLayoutEmail);
+        mFormValidation.addValidationRule(new PasswordValidator(msgErrorPassword, 0), inputLayoutPassword);
+
     }
 
     @OnClick(R.id.btn_accedi)
     public void onClick() {
-        boolean mailValid = mEmailValidator.validate(inputEmail.getText().toString());
-        boolean passwordValid = mPasswordValidator.validate(inputPassword.getText().toString());
+        mFormValidation.validate();
+        if (mFormValidation.isSuccess()) {
+            Toast.makeText(getContext(), "Validazione ok", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getContext(), "Validazione ko", Toast.LENGTH_LONG).show();
+        }
     }
 }
