@@ -1,17 +1,19 @@
-package com.rogerio.tex.swaply.util.validator;
+package com.rogerio.tex.validator.rule;
 
 import android.text.TextUtils;
+
+import com.rogerio.tex.validator.ValidationException;
 
 
 /**
  * Created by rogerio on 18/12/2016.
  */
 
-public class TextValidator implements IValidator<CharSequence> {
+public class EmptyRule implements IRule<CharSequence> {
 
     protected String mMessageError;
 
-    public TextValidator(String messageError) {
+    public EmptyRule(String messageError) {
         mMessageError = messageError;
     }
 

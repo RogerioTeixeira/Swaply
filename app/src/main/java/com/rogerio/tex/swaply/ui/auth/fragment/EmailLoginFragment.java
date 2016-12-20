@@ -11,9 +11,9 @@ import android.widget.Toast;
 
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.fragment.BaseLoginFragment;
-import com.rogerio.tex.swaply.util.FormValidation;
-import com.rogerio.tex.swaply.util.validator.EmailValidator;
-import com.rogerio.tex.swaply.util.validator.PasswordValidator;
+import com.rogerio.tex.validator.Form;
+import com.rogerio.tex.validator.rule.EmailRule;
+import com.rogerio.tex.validator.rule.PasswordRule;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -35,7 +35,7 @@ public class EmailLoginFragment extends BaseLoginFragment {
     @BindView(R.id.btn_accedi)
     Button btnAccedi;
 
-    private FormValidation mFormValidation;
+    private Form mFormValidation;
 
 
     public EmailLoginFragment() {
@@ -52,9 +52,9 @@ public class EmailLoginFragment extends BaseLoginFragment {
         super.onViewCreated(view, savedInstanceState);
         String msgErrorMail = getResources().getString(R.string.validate_error_invalid_email);
         String msgErrorPassword = getResources().getString(R.string.validate_error_invalid_password);
-        mFormValidation = new FormValidation();
-        mFormValidation.addValidationRule(new EmailValidator(msgErrorMail), inputLayoutEmail);
-        mFormValidation.addValidationRule(new PasswordValidator(msgErrorPassword, 0), inputLayoutPassword);
+        mFormValidation = new Form();
+        mFormValidation.addValidationRule(new EmailRule(msgErrorMail), inputLayoutEmail);
+        mFormValidation.addValidationRule(new PasswordRule(msgErrorPassword, 0), inputLayoutPassword);
 
     }
 

@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.util.validator;
+package com.rogerio.tex.validator;
 
 /**
  * Created by Rogerio Lavoro on 19/12/2016.
