@@ -2,24 +2,21 @@ package com.rogerio.tex.validator;
 
 
 import android.content.Context;
-import android.support.design.widget.TextInputLayout;
-import android.view.View;
+import android.os.AsyncTask;
 import android.widget.EditText;
 
 import com.rogerio.tex.validator.rule.IRule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Rogerio Lavoro on 19/12/2016.
  */
 
 public class Form {
-    private final Map<View, List<IRule<CharSequence>>> validatorMap = new HashMap<>();
+    private final List<ValidationTask> mTasks = new ArrayList<>();
     private final List<ValidationResult> mValidationResultList = new ArrayList<>();
     private Context mContext;
     private onCompleteValidationListener mCallback;
@@ -29,48 +26,68 @@ public class Form {
         mCallback = callback;
     }
 
-    public void addValidationRule(EditText view, IRule<CharSequence>... validator) {
-
-        validatorMap.put(view, Arrays.asList(validator));
+    public void addValidationRule(EditText editText, IRule<CharSequence>... validator) {
+        List<IRule<CharSequence>> list = Arrays.asList(validator);
+        mTasks.add(new ValidationTask(editText, list));
     }
 
-    public void addValidationRule(TextInputLayout view, IRule<CharSequence>... validator) {
-
-        validatorMap.put(view, Arrays.asList(validator));
-    }
 
     public void validate() {
-        for (View view : validatorMap.keySet()) {
-            List<IRule<CharSequence>> list = validatorMap.get(view);
-            EditText editText = null;
-            if (view instanceof TextInputLayout) {
-                editText = ((TextInputLayout) view).getEditText();
-            } else if (view instanceof EditText) {
-                editText = (EditText) view;
+        for (EditText editText : validatorMap.keySet()) {
+            List<IRule<CharSequence>> list = validatorMap.get(editText);
+            CharSequence args = editText.getText().toString();
+            for (IRule<CharSequence> rule : list) {
+                if (!rule.isValid(args)) {
+                    String errorMessage = rule.getErrorMessage();
+                    ValidationResult validationResult = new ValidationResult(editText, errorMessage);
+                    mCallback.onFormValidationFailed(validationResult);
+                    return;
+                }
             }
-            if (editText != null) {
-                CharSequence args = editText.getText().toString();
-            }
-
         }
     }
 
-    private List<String> executeValidate(CharSequence args, List<IRule<CharSequence>> list) {
-        List<String> messageError = new ArrayList<>();
-        for (IRule<CharSequence> rule : list) {
-            if (!rule.isValid(args)) {
-                messageError.add(rule.getErrorMessage());
-            }
-        }
-        return messageError;
-    }
+
 
     public interface onCompleteValidationListener {
         void onFormValidationSuccessful();
 
-        void onFormValidationFailed(List<ValidationResult> errorValidations, View v);
+        void onFormValidationFailed(List<ValidationResult> errorValidations);
 
         void onFormValidationException(Exception e);
     }
+
+    public static class ValidationAsyncTask extends AsyncTask<ValidationTask, Integer, List<ValidationResult>> {
+
+        private onCompleteValidationListener mListener;
+
+        public ValidationAsyncTask(onCompleteValidationListener listener) {
+            mListener = listener;
+        }
+
+        @Override
+        protected List<ValidationResult> doInBackground(ValidationTask... tasks) {
+            for (ValidationTask task : tasks) {
+                List<IRule<CharSequence>> rules = task.getRules();
+                EditText editText = task.getEditText();
+                CharSequence arg = editText.getText().toString();
+                for (IRule<CharSequence> rule : rules) {
+                    rule.isValid(editText.getText()) {
+
+                    }
+                }
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(List<ValidationResult> results) {
+
+        }
+
+
+    }
+
 
 }
