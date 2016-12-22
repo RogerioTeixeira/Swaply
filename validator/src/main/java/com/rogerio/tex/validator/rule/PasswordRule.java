@@ -6,7 +6,7 @@ package com.rogerio.tex.validator.rule;
  */
 
 public class PasswordRule extends AbstractRule {
-    private int mMinLen = -1;
+    private int mMinLen = 6;
 
     public PasswordRule(String messageError) {
         super(messageError);
@@ -18,7 +18,8 @@ public class PasswordRule extends AbstractRule {
 
     @Override
     public boolean isValid(CharSequence charSequence) {
-        return (charSequence.length() < mMinLen);
+
+        return charSequence.length() >= mMinLen;
     }
 
 }

@@ -6,11 +6,11 @@ import android.view.View;
  * Created by Rogerio Lavoro on 20/12/2016.
  */
 
-public class ValidationResult {
+public class FormValidationResult {
     private String mErrorMessage;
     private View mViewError;
 
-    public ValidationResult(View view, String errorMessage) {
+    public FormValidationResult(View view, String errorMessage) {
         mViewError = view;
         mErrorMessage = errorMessage;
     }

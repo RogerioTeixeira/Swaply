@@ -2,25 +2,24 @@ package com.rogerio.tex.validator.rule;
 
 import android.text.TextUtils;
 
-import com.rogerio.tex.validator.ValidationException;
-
 
 /**
  * Created by rogerio on 18/12/2016.
  */
 
-public class EmptyRule implements IRule<CharSequence> {
-
-    protected String mMessageError;
+public class EmptyRule extends AbstractRule {
 
     public EmptyRule(String messageError) {
-        mMessageError = messageError;
+        super(messageError);
+    }
+
+    public EmptyRule(int messageErrorResId) {
+        super(messageErrorResId);
     }
 
     @Override
-    public void validate(CharSequence charSequence) throws ValidationException {
-        if (TextUtils.isEmpty(charSequence)) {
-            throw new ValidationException(mMessageError);
-        }
+    public boolean isValid(CharSequence charSequence) {
+        return !TextUtils.isEmpty(charSequence);
+
     }
 }
