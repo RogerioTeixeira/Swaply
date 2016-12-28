@@ -5,19 +5,18 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.ProviderQueryResult;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.fragment.BaseLoginFragment;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
-import com.rogerio.tex.validator.ValidationTask;
-import com.rogerio.tex.validator.rule.EmailRule;
-import com.rogerio.tex.validator.rule.EmptyRule;
-import com.rogerio.tex.validator.rule.IRule;
-import com.rogerio.tex.validator.rule.PasswordRule;
 
 import java.util.List;
 
@@ -39,11 +38,6 @@ public class EmailLoginFragment extends BaseLoginFragment {
         @Override
         public void onFormValidationFailed(List<FormValidationResult> errorValidations) {
             Toast.makeText(getContext(), "Validazione ko", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onFormValidationException(Exception e) {
-            Toast.makeText(getContext(), "Validazione exception:" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     };
     @BindView(R.id.input_email)
@@ -71,30 +65,33 @@ public class EmailLoginFragment extends BaseLoginFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        IRule<CharSequence> emailRule = new EmailRule(getResources().getString(R.string.validate_error_invalid_email));
-        IRule<CharSequence> emptyRule = new EmptyRule(getResources().getString(R.string.validate_error_missing_default));
-        IRule<CharSequence> passwordRule = new PasswordRule(getResources().getString(R.string.validate_error_invalid_password));
 
-        ValidationTask<CharSequence> emailTask = new ValidationTask<>(getContext().getApplicationContext());
-        emailTask.addRule(emptyRule);
-        emailTask.addRule(emailRule);
-
-        ValidationTask<CharSequence> passwordTask = new ValidationTask<>(getContext().getApplicationContext());
-        passwordTask.addRule(emptyRule);
-        passwordTask.addRule(passwordRule);
-
-
-        formValidation = new Form(listenerForm);
-        formValidation.addValidationTask(inputEmail, emailTask);
-        formValidation.addValidationTask(inputPassword, passwordTask);
-
-
-
+        formValidation = new Form.Builder(getContext().getApplicationContext())
+                .addEmailValidationTask(R.string.validate_error_invalid_email, inputEmail, true)
+                .addPasswordValidationTask(R.string.validate_error_invalid_password, inputPassword, true)
+                .addonCompleteValidationListener(listenerForm)
+                .CreateForm();
     }
 
     @OnClick(R.id.btn_accedi)
     public void onClick() {
         formValidation.validate();
+
+
+    }
+
+    class PrimeThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                Task<ProviderQueryResult> curTask = getFirebaseAuth().fetchProvidersForEmail("rogerio.teixeiranunes@gmail.com");
+                ProviderQueryResult result = Tasks.await(curTask);
+                if (result.getProviders() != null)
+                    Log.v("test Provider", result.getProviders().toString());
+            } catch (Exception e) {
+                Log.e("test Provider2", "Errore", e);
+            }
+        }
 
     }
 }

@@ -1,6 +1,7 @@
 package com.rogerio.tex.validator;
 
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -9,27 +10,26 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.EditText;
 
+import com.rogerio.tex.validator.rule.EmailRule;
+import com.rogerio.tex.validator.rule.EmptyRule;
+import com.rogerio.tex.validator.rule.PasswordRule;
+import com.rogerio.tex.validator.rule.Rule;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Rogerio Lavoro on 19/12/2016.
  */
 
-public class Form {
-    private final Map<EditText, ValidationTask<CharSequence>> tasks = new HashMap<>();
-    private onCompleteValidationListener callback;
+public class Form implements FormAsynctask.onCompleteFormAsynctask {
+    private final List<FormContext> listFormContext = new ArrayList<>();
+    private final WeakReference<onCompleteValidationListener> callback;
 
-    public Form(onCompleteValidationListener callback) {
-        this.callback = callback;
-    }
-
-    public void addValidationTask(EditText editText, ValidationTask validationTask) {
-        if (!tasks.containsKey(editText)) {
-            tasks.put(editText, validationTask);
-        }
+    public Form(List<FormContext> listFormContext, onCompleteValidationListener callback) {
+        this.callback = new WeakReference<>(callback);
+        this.listFormContext.addAll(listFormContext);
     }
 
     @Nullable
@@ -59,42 +59,104 @@ public class Form {
 
     }
 
-
     public void validate() {
-        final List<FormValidationResult> validationResultList = new ArrayList<>();
-        Log.v("messaggioError", "task:" + tasks.size());
-        for (EditText editText : tasks.keySet()) {
-            ValidationTask<CharSequence> validationTask = tasks.get(editText);
-            CharSequence args = editText.getText().toString();
-            setErrorMessage(editText, "");
-            try {
-                if (!validationTask.isValid(args)) {
-                    String errorMessage = validationTask.getErrorMessage();
-                    Log.v("messaggioError", "errorMessage:" + errorMessage);
-                    validationResultList.add(new FormValidationResult(editText, errorMessage));
-                    setErrorMessage(editText, errorMessage);
-                }
-            } catch (Exception e) {
-                callback.onFormValidationException(e);
-                return;
-            }
-
-        }
-        if (validationResultList.isEmpty()) {
-            callback.onFormValidationSuccessful();
-        } else {
-            callback.onFormValidationFailed(validationResultList);
-        }
+        new FormAsynctask(this).execute(listFormContext);
     }
 
+    @Override
+    public void onFormValidationSuccessful() {
+        callback.get().onFormValidationSuccessful();
+    }
 
+    @Override
+    public void onFormValidationFailed(List<FormValidationResult> errorValidations) {
+        for (FormValidationResult validationResult : errorValidations) {
+            EditText editText = validationResult.getFormContext().editText;
+            String errorMessage = validationResult.getException().getMessage();
+            setErrorMessage(editText, errorMessage);
+        }
+        callback.get().onFormValidationFailed(errorValidations);
+    }
 
     public interface onCompleteValidationListener {
         void onFormValidationSuccessful();
 
         void onFormValidationFailed(List<FormValidationResult> errorValidations);
 
-        void onFormValidationException(Exception e);
+    }
+
+    public static class Builder {
+        private final WeakReference<Context> context;
+        private final List<FormContext> listFormContext = new ArrayList<>();
+        private WeakReference<onCompleteValidationListener> listener;
+
+        public Builder(Context context) {
+            this.context = new WeakReference<>(context);
+        }
+
+        public Builder addValidationTask(EditText editText, ValidationTask validationTask) {
+            CharSequence arg = editText.getText();
+            FormContext formContext = new FormContext(editText, arg, validationTask);
+            listFormContext.add(formContext);
+            return this;
+        }
+
+
+        public Builder addEmailValidationTask(String errorMessage, EditText editText, boolean verifyEmpty) {
+            Rule<CharSequence> rule = new EmailRule(errorMessage);
+            ValidationTask validationTask = createValidationTask(rule, verifyEmpty);
+            addValidationTask(editText, validationTask);
+            return this;
+        }
+
+        public Builder addEmailValidationTask(int errorMessageResId, EditText editText, boolean verifyEmpty) {
+            String errorMessage = "";
+            if (context != null && context.get() != null) {
+                errorMessage = context.get().getResources().getString(errorMessageResId);
+            }
+            addEmailValidationTask(errorMessage, editText, verifyEmpty);
+            return this;
+        }
+
+        public Builder addPasswordValidationTask(String errorMessage, EditText editText, boolean verifyEmpty) {
+            Rule<CharSequence> rule = new PasswordRule(errorMessage);
+            ValidationTask validationTask = createValidationTask(rule, verifyEmpty);
+            addValidationTask(editText, validationTask);
+            return this;
+        }
+
+        public Builder addPasswordValidationTask(int errorMessageResId, EditText editText, boolean verifyEmpty) {
+            String errorMessage = "";
+            if (context != null && context.get() != null) {
+                errorMessage = context.get().getResources().getString(errorMessageResId);
+            }
+            addPasswordValidationTask(errorMessage, editText, verifyEmpty);
+            return this;
+        }
+
+        public Builder addonCompleteValidationListener(onCompleteValidationListener listener) {
+            this.listener = new WeakReference<>(listener);
+            return this;
+        }
+
+        private ValidationTask createValidationTask(Rule rule, boolean verifyEmpty) {
+            ValidationTask<CharSequence> task = new ValidationTask<>();
+            if (verifyEmpty) {
+                task.addRule(new EmptyRule(rule.getErrorMessage()));
+            }
+            task.addRule(rule);
+            return task;
+        }
+
+        public Form CreateForm() {
+            Form form = new Form(listFormContext, listener.get());
+
+            listener.clear();
+
+            return form;
+        }
+
+
     }
 
 

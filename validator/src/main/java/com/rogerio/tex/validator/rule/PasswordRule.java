@@ -1,25 +1,25 @@
 package com.rogerio.tex.validator.rule;
 
 
+import android.text.TextUtils;
+
 /**
  * Created by rogerio on 18/12/2016.
  */
 
 public class PasswordRule extends AbstractRule {
-    private int mMinLen = 6;
+    private final int MIN_LEN = 6;
 
     public PasswordRule(String messageError) {
         super(messageError);
     }
 
-    public PasswordRule(int messageErrorResId) {
-        super(messageErrorResId);
-    }
 
     @Override
     public boolean isValid(CharSequence charSequence) {
-
-        return charSequence.length() >= mMinLen;
+        if (TextUtils.isEmpty(charSequence)) {
+            return true;
+        } else return charSequence.length() >= MIN_LEN;
     }
 
 }

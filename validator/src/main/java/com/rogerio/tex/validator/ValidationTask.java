@@ -1,9 +1,8 @@
 package com.rogerio.tex.validator;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.rogerio.tex.validator.rule.IRule;
+import com.rogerio.tex.validator.rule.Rule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,53 +12,46 @@ import java.util.List;
  */
 
 public class ValidationTask<T> {
-    private final List<IRule<T>> rules = new ArrayList<>();
+    private final List<Rule<T>> rules = new ArrayList<>();
     private String errorMessage;
-    private Context context;
 
-    public ValidationTask(final Context context) {
-        this.context = context;
+
+    public ValidationTask() {
+
     }
 
     public String getErrorMessage() {
         return this.errorMessage;
     }
 
-    public void addRule(@NonNull final IRule<T> rule) {
+    public void addRule(@NonNull final Rule<T> rule) {
         if (!rules.contains(rule)) {
             rules.add(rule);
         }
 
     }
 
-    public void addAllRule(@NonNull final List<IRule<T>> rules) {
+    public void addAllRule(@NonNull final List<Rule<T>> rules) {
         this.rules.addAll(rules);
     }
 
-    public void removeRule(@NonNull final IRule<T> rule) {
+    public void removeRule(@NonNull final Rule<T> rule) {
         rules.remove(rule);
     }
 
-    public List<IRule<T>> getRules() {
+    public List<Rule<T>> getRules() {
         return rules;
     }
 
-    public boolean isValid(final T arg) throws Exception {
+    public void Validate(final T arg) throws Exception {
         if (rules.isEmpty()) {
             throw new IllegalArgumentException("List rules is empty");
         }
-        for (IRule<T> rule : rules) {
+        for (Rule<T> rule : rules) {
             if (!rule.isValid(arg)) {
-                int ErrorMessageResId = rule.getErrorMessageResId();
-                if (ErrorMessageResId != 0) {
-                    errorMessage = context.getResources().getString(ErrorMessageResId);
-                } else {
-                    errorMessage = rule.getErrorMessage();
-                }
-                return false;
+                throw new ValidationException(rule.getErrorMessage());
             }
         }
-        return true;
     }
 
 

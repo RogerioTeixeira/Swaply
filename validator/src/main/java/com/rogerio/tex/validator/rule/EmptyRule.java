@@ -13,9 +13,6 @@ public class EmptyRule extends AbstractRule {
         super(messageError);
     }
 
-    public EmptyRule(int messageErrorResId) {
-        super(messageErrorResId);
-    }
 
     @Override
     public boolean isValid(CharSequence charSequence) {
