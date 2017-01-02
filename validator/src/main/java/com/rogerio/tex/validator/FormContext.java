@@ -11,9 +11,9 @@ public class FormContext {
     public final CharSequence arg;
     public final ValidationTask validationTask;
 
-    public FormContext(EditText editText, CharSequence arg, ValidationTask validationTask) {
+    public FormContext(EditText editText, ValidationTask validationTask) {
         this.editText = editText;
-        this.arg = arg;
+        this.arg = editText.getText();
         this.validationTask = validationTask;
     }
 }

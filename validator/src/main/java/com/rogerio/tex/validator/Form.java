@@ -28,7 +28,7 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
     private final Map<EditText, ValidationTask> mapParam = new HashMap<>();
     private final WeakReference<onCompleteValidationListener> callback;
 
-    public Form(Map<EditText, ValidationTask> mapParam, onCompleteValidationListener callback) {
+    private Form(Map<EditText, ValidationTask> mapParam, onCompleteValidationListener callback) {
         this.callback = new WeakReference<>(callback);
         this.mapParam.putAll(mapParam);
     }
@@ -71,7 +71,7 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
         for (EditText editText : mapParam.keySet()) {
             ValidationTask validationTask = mapParam.get(editText);
             CharSequence charSequence = editText.getText();
-            listFormContext.add(new FormContext(editText, charSequence, validationTask));
+            listFormContext.add(new FormContext(editText, validationTask));
         }
 
         new FormAsynctask(this).execute(listFormContext);
@@ -136,9 +136,8 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
         }
 
         public Builder addEmailValidationTask(int errorMessageResId, EditText editText, boolean verifyEmpty) {
-            String errorMessage = "";
             final Context context = editText.getContext();
-            errorMessage = context.getResources().getString(errorMessageResId);
+            final String errorMessage = context.getResources().getString(errorMessageResId);
             addEmailValidationTask(errorMessage, editText, verifyEmpty);
             return this;
         }
@@ -151,9 +150,9 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
         }
 
         public Builder addPasswordValidationTask(int errorMessageResId, EditText editText, boolean verifyEmpty) {
-            String errorMessage = "";
+
             final Context context = editText.getContext();
-            errorMessage = context.getResources().getString(errorMessageResId);
+            final String errorMessage = context.getResources().getString(errorMessageResId);
             addPasswordValidationTask(errorMessage, editText, verifyEmpty);
             return this;
         }
