@@ -10,9 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.ProviderQueryResult;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.fragment.BaseLoginFragment;
 import com.rogerio.tex.validator.Form;
@@ -29,14 +26,15 @@ import butterknife.OnClick;
 public class EmailLoginFragment extends BaseLoginFragment {
 
 
+
     private final Form.onCompleteValidationListener listenerForm = new Form.onCompleteValidationListener() {
         @Override
-        public void onFormValidationSuccessful() {
+        public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
             Toast.makeText(getContext(), "Validazione ok", Toast.LENGTH_LONG).show();
         }
 
         @Override
-        public void onFormValidationFailed(List<FormValidationResult> errorValidations) {
+        public void onFormValidationFailed(List<FormValidationResult> validationResults) {
             Toast.makeText(getContext(), "Validazione ko", Toast.LENGTH_LONG).show();
         }
     };
@@ -65,8 +63,9 @@ public class EmailLoginFragment extends BaseLoginFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.v("Login", "onViewCreated");
 
-        formValidation = new Form.Builder(getContext().getApplicationContext())
+        formValidation = new Form.Builder()
                 .addEmailValidationTask(R.string.validate_error_invalid_email, inputEmail, true)
                 .addPasswordValidationTask(R.string.validate_error_invalid_password, inputPassword, true)
                 .addonCompleteValidationListener(listenerForm)
@@ -75,12 +74,13 @@ public class EmailLoginFragment extends BaseLoginFragment {
 
     @OnClick(R.id.btn_accedi)
     public void onClick() {
+        Log.v("EmailLoginFragment", "email:" + inputEmail.toString());
         formValidation.validate();
 
 
     }
 
-    class PrimeThread extends Thread {
+    /*class PrimeThread extends Thread {
         @Override
         public void run() {
             try {
@@ -93,5 +93,5 @@ public class EmailLoginFragment extends BaseLoginFragment {
             }
         }
 
-    }
+    }*/
 }

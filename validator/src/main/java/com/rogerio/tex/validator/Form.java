@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.EditText;
@@ -17,19 +16,21 @@ import com.rogerio.tex.validator.rule.Rule;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Rogerio Lavoro on 19/12/2016.
  */
 
 public class Form implements FormAsynctask.onCompleteFormAsynctask {
-    private final List<FormContext> listFormContext = new ArrayList<>();
+    private final Map<EditText, ValidationTask> mapParam = new HashMap<>();
     private final WeakReference<onCompleteValidationListener> callback;
 
-    public Form(List<FormContext> listFormContext, onCompleteValidationListener callback) {
+    public Form(Map<EditText, ValidationTask> mapParam, onCompleteValidationListener callback) {
         this.callback = new WeakReference<>(callback);
-        this.listFormContext.addAll(listFormContext);
+        this.mapParam.putAll(mapParam);
     }
 
     @Nullable
@@ -50,54 +51,79 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
 
         TextInputLayout textInputLayout = getTextInputLayout(view);
         if (textInputLayout != null) {
-            Log.v("messaggioError", "inputLayout");
-            textInputLayout.setError(message);
+            if (message == null) {
+                textInputLayout.setError(message);
+                textInputLayout.setErrorEnabled(false);
+            } else {
+                textInputLayout.setErrorEnabled(true);
+                textInputLayout.setError(message);
+            }
+
         } else if (view instanceof EditText) {
-            Log.v("messaggioError", "Edittext");
             ((EditText) view).setError(message);
         }
 
     }
 
     public void validate() {
+
+        final List<FormContext> listFormContext = new ArrayList<>();
+        for (EditText editText : mapParam.keySet()) {
+            ValidationTask validationTask = mapParam.get(editText);
+            CharSequence charSequence = editText.getText();
+            listFormContext.add(new FormContext(editText, charSequence, validationTask));
+        }
+
         new FormAsynctask(this).execute(listFormContext);
     }
 
+    /*
+              Callbacks della FormAsynctask.onCompleteFormAsynctask
+    */
+
     @Override
-    public void onFormValidationSuccessful() {
-        callback.get().onFormValidationSuccessful();
+    public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
+        setError(validationResults);
+        callback.get().onFormValidationSuccessful(validationResults);
     }
 
     @Override
-    public void onFormValidationFailed(List<FormValidationResult> errorValidations) {
-        for (FormValidationResult validationResult : errorValidations) {
+    public void onFormValidationFailed(List<FormValidationResult> validationResults) {
+        setError(validationResults);
+        callback.get().onFormValidationFailed(validationResults);
+    }
+    /*
+          fine callbacks FormAsynctask.onCompleteFormAsynctask
+     */
+
+    private void setError(List<FormValidationResult> formValidationResults) {
+        for (FormValidationResult validationResult : formValidationResults) {
             EditText editText = validationResult.getFormContext().editText;
-            String errorMessage = validationResult.getException().getMessage();
+            String errorMessage = null;
+            if (!validationResult.isOk()) {
+                errorMessage = validationResult.getException().getMessage();
+            }
             setErrorMessage(editText, errorMessage);
         }
-        callback.get().onFormValidationFailed(errorValidations);
     }
 
     public interface onCompleteValidationListener {
-        void onFormValidationSuccessful();
+        void onFormValidationSuccessful(List<FormValidationResult> validationResults);
 
-        void onFormValidationFailed(List<FormValidationResult> errorValidations);
+        void onFormValidationFailed(List<FormValidationResult> validationResults);
 
     }
 
     public static class Builder {
-        private final WeakReference<Context> context;
-        private final List<FormContext> listFormContext = new ArrayList<>();
+        private final Map<EditText, ValidationTask> mapParam = new HashMap<>();
         private WeakReference<onCompleteValidationListener> listener;
 
-        public Builder(Context context) {
-            this.context = new WeakReference<>(context);
+        public Builder() {
+
         }
 
         public Builder addValidationTask(EditText editText, ValidationTask validationTask) {
-            CharSequence arg = editText.getText();
-            FormContext formContext = new FormContext(editText, arg, validationTask);
-            listFormContext.add(formContext);
+            mapParam.put(editText, validationTask);
             return this;
         }
 
@@ -111,9 +137,8 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
 
         public Builder addEmailValidationTask(int errorMessageResId, EditText editText, boolean verifyEmpty) {
             String errorMessage = "";
-            if (context != null && context.get() != null) {
-                errorMessage = context.get().getResources().getString(errorMessageResId);
-            }
+            final Context context = editText.getContext();
+            errorMessage = context.getResources().getString(errorMessageResId);
             addEmailValidationTask(errorMessage, editText, verifyEmpty);
             return this;
         }
@@ -127,9 +152,8 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
 
         public Builder addPasswordValidationTask(int errorMessageResId, EditText editText, boolean verifyEmpty) {
             String errorMessage = "";
-            if (context != null && context.get() != null) {
-                errorMessage = context.get().getResources().getString(errorMessageResId);
-            }
+            final Context context = editText.getContext();
+            errorMessage = context.getResources().getString(errorMessageResId);
             addPasswordValidationTask(errorMessage, editText, verifyEmpty);
             return this;
         }
@@ -149,7 +173,7 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
         }
 
         public Form CreateForm() {
-            Form form = new Form(listFormContext, listener.get());
+            Form form = new Form(mapParam, listener.get());
 
             listener.clear();
 

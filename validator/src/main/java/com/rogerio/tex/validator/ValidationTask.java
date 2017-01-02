@@ -1,6 +1,7 @@
 package com.rogerio.tex.validator;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.rogerio.tex.validator.rule.Rule;
 
@@ -48,6 +49,7 @@ public class ValidationTask<T> {
             throw new IllegalArgumentException("List rules is empty");
         }
         for (Rule<T> rule : rules) {
+            Log.v("Validation", "argomento" + arg);
             if (!rule.isValid(arg)) {
                 throw new ValidationException(rule.getErrorMessage());
             }

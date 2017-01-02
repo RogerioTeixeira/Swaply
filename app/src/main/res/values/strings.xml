@@ -22,6 +22,7 @@
 
     <string name="button_login">Accedi</string>
     <string name="button_create">Registrati</string>
+    <string name="button_avanti">Avanti</string>
 
     <string name="label_button_login_google">Accedi con Google</string>
     <string name="label_button_login_facebook">Accedi con Facebook</string>

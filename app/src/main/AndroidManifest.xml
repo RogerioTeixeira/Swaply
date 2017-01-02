@@ -27,12 +27,12 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="c9480be2212e858809122576e7776a1f1015dc7b" />
+            android:value="c9480be2212e858809122576e7776a1f1015dc7b"
+            tools:replace="android:value" />
 
         <activity
             android:name=".ui.MainActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation">
-        </activity>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"></activity>
         <activity
             android:name=".ui.auth.EmailAuthActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation">
@@ -41,6 +41,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity android:name=".ui.testActivity">
+
         </activity>
     </application>
 

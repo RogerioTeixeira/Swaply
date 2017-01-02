@@ -1,6 +1,7 @@
 package com.rogerio.tex.validator;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -25,19 +26,29 @@ public class FormAsynctask extends AsyncTask<List<FormContext>, Void, List<FormV
         for (FormContext formContext : listFormContext) {
             ValidationTask<CharSequence> validationTask = formContext.validationTask;
             CharSequence args = formContext.arg;
+            Log.v("TaskForm", "Argomento:" + args);
+            Exception exception = null;
             try {
                 validationTask.Validate(args);
             } catch (Exception e) {
-                validationResultList.add(new FormValidationResult(formContext, e));
+                exception = e;
             }
+            validationResultList.add(new FormValidationResult(formContext, exception));
         }
         return validationResultList;
     }
 
     @Override
     protected void onPostExecute(List<FormValidationResult> args) {
-        if (args.size() == 0) {
-            listener.get().onFormValidationSuccessful();
+        boolean isError = false;
+        for (FormValidationResult validationResult : args) {
+            if (validationResult.getException() != null) {
+                isError = true;
+                break;
+            }
+        }
+        if (!isError) {
+            listener.get().onFormValidationSuccessful(args);
         } else {
             listener.get().onFormValidationFailed(args);
         }
@@ -46,9 +57,9 @@ public class FormAsynctask extends AsyncTask<List<FormContext>, Void, List<FormV
     }
 
     public interface onCompleteFormAsynctask {
-        void onFormValidationSuccessful();
+        void onFormValidationSuccessful(List<FormValidationResult> validationResults);
 
-        void onFormValidationFailed(List<FormValidationResult> errorValidations);
+        void onFormValidationFailed(List<FormValidationResult> validationResults);
 
     }
 
