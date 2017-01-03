@@ -13,6 +13,7 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorHint">@color/color_edit_text</item>
         <item name="android:windowBackground">@color/color_grey_200</item>
+        <item name="android:alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert</item>
     </style>
 
     <style name="WrapperStyle">
