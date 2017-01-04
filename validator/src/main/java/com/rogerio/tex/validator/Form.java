@@ -4,6 +4,7 @@ package com.rogerio.tex.validator;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.view.ViewParent;
@@ -135,7 +136,7 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
             return this;
         }
 
-        public Builder addEmailValidationTask(int errorMessageResId, EditText editText, boolean verifyEmpty) {
+        public Builder addEmailValidationTask(@StringRes int errorMessageResId, EditText editText, boolean verifyEmpty) {
             final Context context = editText.getContext();
             final String errorMessage = context.getResources().getString(errorMessageResId);
             addEmailValidationTask(errorMessage, editText, verifyEmpty);
@@ -149,7 +150,7 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
             return this;
         }
 
-        public Builder addPasswordValidationTask(int errorMessageResId, EditText editText, boolean verifyEmpty) {
+        public Builder addPasswordValidationTask(@StringRes int errorMessageResId, EditText editText, boolean verifyEmpty) {
 
             final Context context = editText.getContext();
             final String errorMessage = context.getResources().getString(errorMessageResId);

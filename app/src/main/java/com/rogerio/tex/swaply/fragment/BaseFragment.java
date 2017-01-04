@@ -1,19 +1,18 @@
 package com.rogerio.tex.swaply.fragment;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.ui.FragmentHelper;
 
 import butterknife.ButterKnife;
 
 
 public abstract class BaseFragment extends Fragment {
-    private ProgressDialog mProgressDialog;
+    protected FragmentHelper helper;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -24,7 +23,9 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        helper = new FragmentHelper(this);
     }
 
     @Override
@@ -37,22 +38,6 @@ public abstract class BaseFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-    }
-
-    protected void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(getContext());
-            mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.show();
-    }
-
-    protected void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
     }
 
 }

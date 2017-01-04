@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.fragment.BaseLoginFragment;
+import com.rogerio.tex.swaply.fragment.BaseFragment;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 
@@ -23,7 +23,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EmailLoginFragment extends BaseLoginFragment {
+public class EmailLoginFragment extends BaseFragment {
 
 
 

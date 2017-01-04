@@ -34,7 +34,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateAccountFragment extends BaseFragment {
+public class CreateAccountFragment extends BaseFragment implements Form.onCompleteValidationListener {
 
     @BindView(R.id.input_email)
     TextInputEditText inputEmail;
@@ -53,38 +53,43 @@ public class CreateAccountFragment extends BaseFragment {
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
 
-
-    private final Form.onCompleteValidationListener listenerForm = new Form.onCompleteValidationListener() {
-        @Override
-        public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
-            Toast.makeText(getContext(), "Validazione ok", Toast.LENGTH_LONG).show();
-            Snackbar.make(coordinatorLayout, "Validazione ok", Snackbar.LENGTH_LONG)
-                    .setActionTextColor(Color.RED)
-                    .show();
-        }
-
-        @Override
-        public void onFormValidationFailed(List<FormValidationResult> validationResults) {
-            Toast.makeText(getContext(), "Validazione ko", Toast.LENGTH_LONG).show();
-
-            Snackbar snackbar = Snackbar.make(coordinatorLayout, "", Snackbar.LENGTH_LONG);
-            View sbView = snackbar.getView();
-            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(Color.RED);
-            snackbar.show();
-
-            DialogFragment newFragment = new AlertAccount();
-            newFragment.show(getFragmentManager(), "missiles");
-
-        }
-    };
-
-
     private Form formValidation;
 
     public CreateAccountFragment() {
         // Required empty public constructor
     }
+
+
+    // metodo interfaccia Form.onCompleteValidationListener
+    @Override
+    public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
+        Toast.makeText(getContext(), "Validazione ok", Toast.LENGTH_LONG).show();
+        Snackbar.make(coordinatorLayout, "Validazione ok", Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED)
+                .show();
+    }
+
+
+    // metodo interfaccia Form.onCompleteValidationListener
+    @Override
+    public void onFormValidationFailed(List<FormValidationResult> validationResults) {
+        Toast.makeText(getContext(), "Validazione ko", Toast.LENGTH_LONG).show();
+
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, "", Snackbar.LENGTH_LONG);
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.RED);
+        snackbar.show();
+
+        DialogFragment newFragment = new AlertAccount();
+        newFragment.show(getFragmentManager(), "missiles");
+
+    }
+
+    private void CreateAccountMail() {
+
+    }
+
 
     @Override
     protected int getFragmentLayout() {
@@ -98,7 +103,7 @@ public class CreateAccountFragment extends BaseFragment {
         Log.v("Create", "onViewCreated");
         formValidation = new Form.Builder()
                 .addEmailValidationTask(R.string.validate_error_invalid_email, inputEmail, true)
-                .addonCompleteValidationListener(listenerForm)
+                .addonCompleteValidationListener(this)
                 .CreateForm();
 
     }
