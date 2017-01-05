@@ -3,10 +3,9 @@ package com.rogerio.tex.swaply.ui.auth.fragment;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
@@ -17,10 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.fragment.BaseFragment;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
@@ -34,7 +36,9 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateAccountFragment extends BaseFragment implements Form.onCompleteValidationListener {
+public class CreateAccountFragment extends BaseFragment {
+
+    private final static String TAG = CreateAccountFragment.class.getSimpleName();
 
     @BindView(R.id.input_email)
     TextInputEditText inputEmail;
@@ -52,15 +56,15 @@ public class CreateAccountFragment extends BaseFragment implements Form.onComple
     Button btnCreaAccount;
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
-
     private Form formValidation;
+
 
     public CreateAccountFragment() {
         // Required empty public constructor
     }
 
 
-    // metodo interfaccia Form.onCompleteValidationListener
+    /*
     @Override
     public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
         Toast.makeText(getContext(), "Validazione ok", Toast.LENGTH_LONG).show();
@@ -70,7 +74,7 @@ public class CreateAccountFragment extends BaseFragment implements Form.onComple
     }
 
 
-    // metodo interfaccia Form.onCompleteValidationListener
+
     @Override
     public void onFormValidationFailed(List<FormValidationResult> validationResults) {
         Toast.makeText(getContext(), "Validazione ko", Toast.LENGTH_LONG).show();
@@ -84,10 +88,31 @@ public class CreateAccountFragment extends BaseFragment implements Form.onComple
         DialogFragment newFragment = new AlertAccount();
         newFragment.show(getFragmentManager(), "missiles");
 
+    }*/
+
+
+    private void CreateAccountMail(String mail, String password) {
+        helper.getFirebaseAuth().signInWithEmailAndPassword(mail, password)
+                .addOnFailureListener(new TaskFailureLogger(TAG, "Errore creazione account email"))
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        handlerException(e);
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+
+                    }
+                });
     }
 
-    private void CreateAccountMail() {
-
+    private void handlerException(Exception e) {
+        if (e instanceof FirebaseAuthUserCollisionException) {
+            DialogFragment newFragment = new AlertAccount();
+            newFragment.show(getFragmentManager(), "DialogCollision");
+        }
     }
 
 
@@ -103,7 +128,16 @@ public class CreateAccountFragment extends BaseFragment implements Form.onComple
         Log.v("Create", "onViewCreated");
         formValidation = new Form.Builder()
                 .addEmailValidationTask(R.string.validate_error_invalid_email, inputEmail, true)
-                .addonCompleteValidationListener(this)
+                .addonCompleteValidationListener(new Form.onCompleteValidationListener() {
+                    @Override
+                    public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
+                    }
+
+                    @Override
+                    public void onFormValidationFailed(List<FormValidationResult> validationResults) {
+
+                    }
+                })
                 .CreateForm();
 
     }
@@ -126,11 +160,13 @@ public class CreateAccountFragment extends BaseFragment implements Form.onComple
     }
 
     public static class AlertAccount extends DialogFragment {
+
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("L'indirizzo mail risulta già registrato trmite Google")
-                    .setTitle("Accedi")
+            builder.setMessage("L'indirizzo mail risulta già registrato tramite Google")
+                    .setTitle("Attenzione")
                     .setPositiveButton("Accedi", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             // FIRE ZE MISSILES!
