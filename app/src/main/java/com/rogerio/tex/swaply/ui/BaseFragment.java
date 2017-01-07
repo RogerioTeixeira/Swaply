@@ -1,12 +1,10 @@
-package com.rogerio.tex.swaply.fragment;
+package com.rogerio.tex.swaply.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.rogerio.tex.swaply.ui.FragmentHelper;
 
 import butterknife.ButterKnife;
 
@@ -38,6 +36,13 @@ public abstract class BaseFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        helper.dismissDialog();
+
     }
 
 }

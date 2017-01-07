@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.fragment.BaseFragment;
+import com.rogerio.tex.swaply.ui.BaseFragment;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 

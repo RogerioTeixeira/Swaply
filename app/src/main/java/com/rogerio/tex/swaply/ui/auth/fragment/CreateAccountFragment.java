@@ -1,21 +1,18 @@
 package com.rogerio.tex.swaply.ui.auth.fragment;
 
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,7 +20,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
-import com.rogerio.tex.swaply.fragment.BaseFragment;
+import com.rogerio.tex.swaply.ui.BaseFragment;
+import com.rogerio.tex.swaply.ui.auth.CollisionAccountHandler;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 
@@ -92,26 +90,30 @@ public class CreateAccountFragment extends BaseFragment {
 
 
     private void CreateAccountMail(String mail, String password) {
-        helper.getFirebaseAuth().signInWithEmailAndPassword(mail, password)
+        helper.showLoadingDialog("");
+        helper.getFirebaseAuth().createUserWithEmailAndPassword(mail, password)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Errore creazione account email"))
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        helper.dismissDialog();
                         handlerException(e);
                     }
                 })
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-
+                        helper.dismissDialog();
                     }
                 });
     }
 
     private void handlerException(Exception e) {
         if (e instanceof FirebaseAuthUserCollisionException) {
-            DialogFragment newFragment = new AlertAccount();
-            newFragment.show(getFragmentManager(), "DialogCollision");
+            CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(helper);
+            collisionAccountHandler.show(inputEmail.getText().toString(), getFragmentManager());
+        } else {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -128,9 +130,14 @@ public class CreateAccountFragment extends BaseFragment {
         Log.v("Create", "onViewCreated");
         formValidation = new Form.Builder()
                 .addEmailValidationTask(R.string.validate_error_invalid_email, inputEmail, true)
+                .addPasswordValidationTask(R.string.validate_error_invalid_password, inputPassword, true)
                 .addonCompleteValidationListener(new Form.onCompleteValidationListener() {
                     @Override
                     public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
+
+                        String email = inputEmail.getText().toString();
+                        String password = inputPassword.getText().toString();
+                        CreateAccountMail(email, password);
                     }
 
                     @Override
@@ -159,27 +166,4 @@ public class CreateAccountFragment extends BaseFragment {
         return rootView;
     }
 
-    public static class AlertAccount extends DialogFragment {
-
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("L'indirizzo mail risulta già registrato tramite Google")
-                    .setTitle("Attenzione")
-                    .setPositiveButton("Accedi", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // FIRE ZE MISSILES!
-                        }
-                    })
-                    .setNegativeButton("Cancella", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            return builder.create();
-
-        }
-    }
 }

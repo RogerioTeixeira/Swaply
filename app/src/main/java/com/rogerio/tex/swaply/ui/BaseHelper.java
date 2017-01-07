@@ -25,6 +25,7 @@ public class BaseHelper {
         return FirebaseAuth.getInstance();
     }
 
+
     public void showLoadingDialog(String message) {
         dismissDialog();
         progressDialog = ProgressDialog.show(context, "", message, true);
@@ -48,6 +49,10 @@ public class BaseHelper {
     public void finishActivity(Activity activity, int resultCode, Intent intent) {
         activity.setResult(resultCode, intent);
         activity.finish();
+    }
+
+    public Context getContext() {
+        return context;
     }
 
 

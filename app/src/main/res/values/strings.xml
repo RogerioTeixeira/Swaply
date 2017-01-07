@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">Swaply</string>
     <string name="loading">Caricamento</string>
 
@@ -14,7 +14,7 @@
     <string name="menu_exit">Esci</string>
 
     <string name="email_input">Email</string>
-    <string name="password_input">Password</string>
+    <string name="password_input">Password(Minimo 6 caratteri)</string>
     <string name="name_input">Nome</string>
 
     <string name="title_toolbar_create">Crea nuovo account</string>
@@ -34,9 +34,19 @@
 
     <string name="validate_error_missing_email">Indirizzo email obbligatorio</string>
     <string name="validate_error_invalid_email">Indirizzo email non valido</string>
-
     <string name="validate_error_invalid_password">Password non valida</string>
-    <string name="validate_error_invalid2_password">Password non sicura. Utilizzare almeno 6 caratteri</string>
+
+    <string name="message_email_collision">L\'indirizzo mail <xliff:g id="email_addr">%1$s</xliff:g> risulta già registrato.
+        Accedi con <xliff:g id="provider_name">%2$s</xliff:g>
+    </string>
+
+    <string name="provider_name_google">Google</string>
+
+    <string name="provider_name_facebook">Facebook</string>
+
+    <string name="provider_name_twitter">Twitter</string>
+
+    <string name="provider_name_Email">Email</string>
 
 
 </resources>

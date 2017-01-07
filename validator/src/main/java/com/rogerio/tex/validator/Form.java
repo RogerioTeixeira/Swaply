@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.EditText;
@@ -15,7 +16,6 @@ import com.rogerio.tex.validator.rule.EmptyRule;
 import com.rogerio.tex.validator.rule.PasswordRule;
 import com.rogerio.tex.validator.rule.Rule;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +27,10 @@ import java.util.Map;
 
 public class Form implements FormAsynctask.onCompleteFormAsynctask {
     private final Map<EditText, ValidationTask> mapParam = new HashMap<>();
-    private final WeakReference<onCompleteValidationListener> callback;
+    private final onCompleteValidationListener callback;
 
     private Form(Map<EditText, ValidationTask> mapParam, onCompleteValidationListener callback) {
-        this.callback = new WeakReference<>(callback);
+        this.callback = callback;
         this.mapParam.putAll(mapParam);
     }
 
@@ -85,13 +85,23 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
     @Override
     public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
         setError(validationResults);
-        callback.get().onFormValidationSuccessful(validationResults);
+        if (callback == null) {
+            Log.v("Form", "Callback vuota");
+        } else {
+            Log.v("Form", "Callback piena");
+        }
+        callback.onFormValidationSuccessful(validationResults);
     }
 
     @Override
     public void onFormValidationFailed(List<FormValidationResult> validationResults) {
         setError(validationResults);
-        callback.get().onFormValidationFailed(validationResults);
+        if (callback == null) {
+            Log.v("Form", "Callback vuota");
+        } else {
+            Log.v("Form", "Callback piena");
+        }
+        callback.onFormValidationFailed(validationResults);
     }
     /*
           fine callbacks FormAsynctask.onCompleteFormAsynctask
@@ -117,7 +127,7 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
 
     public static class Builder {
         private final Map<EditText, ValidationTask> mapParam = new HashMap<>();
-        private WeakReference<onCompleteValidationListener> listener;
+        private onCompleteValidationListener listener;
 
         public Builder() {
 
@@ -159,7 +169,7 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
         }
 
         public Builder addonCompleteValidationListener(onCompleteValidationListener listener) {
-            this.listener = new WeakReference<>(listener);
+            this.listener = listener;
             return this;
         }
 
@@ -173,10 +183,7 @@ public class Form implements FormAsynctask.onCompleteFormAsynctask {
         }
 
         public Form CreateForm() {
-            Form form = new Form(mapParam, listener.get());
-
-            listener.clear();
-
+            Form form = new Form(mapParam, listener);
             return form;
         }
 
