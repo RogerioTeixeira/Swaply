@@ -40,7 +40,7 @@ public class TwitterProvider extends AuthProvider {
     }
 
     private void initialize() {
-        AppCompatActivity activity = weakActivity.get();
+        AppCompatActivity activity = appCompatActivity;
         String twitter_key = activity.getResources().getString(R.string.twitter_key);
         String twitter_secret = activity.getResources().getString(R.string.twitter_secret);
         TwitterAuthConfig authConfig = new TwitterAuthConfig(twitter_key, twitter_secret);
@@ -62,7 +62,7 @@ public class TwitterProvider extends AuthProvider {
 
     @Override
     public void startLogin() {
-        Activity activity = weakActivity.get();
+        Activity activity = appCompatActivity;
         Twitter.getSessionManager().clearActiveSession();
         Twitter.logOut();
         Log.v(TAG, "twitter prima login");
@@ -71,17 +71,17 @@ public class TwitterProvider extends AuthProvider {
             @Override
             public void success(Result<TwitterSession> twitterSessionResult) {
                 Log.v(TAG, "twitter success");
-                if (weakAuthCallback == null) {
+                if (authCallback == null) {
                     Log.v(TAG, "twitter callback null");
                 } else {
-                    if (weakAuthCallback.get() == null) {
+                    if (authCallback == null) {
                         Log.v(TAG, "twitter get callback null");
                     }
                 }
 
-                if (weakAuthCallback != null && weakAuthCallback.get() != null) {
+                if (authCallback != null && authCallback != null) {
                     Log.v(TAG, "twitter callback");
-                    AuthCallback mAuthCallback = weakAuthCallback.get();
+                    AuthCallback mAuthCallback = authCallback;
                     TwitterSession session = twitterSessionResult.data;
                     AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token,
                             session.getAuthToken().secret);

@@ -6,34 +6,30 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthCredential;
 
-import java.lang.ref.WeakReference;
-
 /**
  * Created by Rogerio Lavoro on 02/12/2016.
  */
 
 public abstract class AuthProvider {
 
-    protected WeakReference<AppCompatActivity> weakActivity;
-    protected WeakReference<AuthCallback> weakAuthCallback;
+    protected AppCompatActivity appCompatActivity;
+    protected AuthCallback authCallback;
 
     public AuthProvider(AppCompatActivity activity) {
-        weakActivity = new WeakReference<AppCompatActivity>(activity);
+        appCompatActivity = activity;
     }
 
     public AuthProvider(AppCompatActivity activity, AuthCallback authCallback) {
         this(activity);
-        weakAuthCallback = new WeakReference<AuthCallback>(authCallback);
+        this.authCallback = authCallback;
     }
 
     protected void onDestroy() {
-        if (weakActivity != null) {
-            weakActivity.clear();
-            weakActivity = null;
+        if (appCompatActivity != null) {
+            appCompatActivity = null;
         }
-        if (weakAuthCallback != null) {
-            weakAuthCallback.clear();
-            weakAuthCallback = null;
+        if (authCallback != null) {
+            authCallback = null;
         }
     }
 
@@ -49,5 +45,7 @@ public abstract class AuthProvider {
         void onSuccess(AuthCredential credential);
 
         void onFailure(Bundle extra);
+
+        void loginWith(String providerId);
     }
 }

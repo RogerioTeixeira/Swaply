@@ -1,6 +1,7 @@
 package com.rogerio.tex.swaply.ui.auth.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -17,11 +18,14 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.ui.BaseFragment;
 import com.rogerio.tex.swaply.ui.auth.CollisionAccountHandler;
+import com.rogerio.tex.swaply.ui.auth.CompleteListener;
+import com.rogerio.tex.swaply.ui.auth.EmailAuthActivity;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 
@@ -46,6 +50,8 @@ public class CreateAccountFragment extends BaseFragment {
     TextInputEditText inputName;
     @BindView(R.id.input_layout_name)
     TextInputLayout inputLayoutName;
+
+
     @BindView(R.id.input_password)
     TextInputEditText inputPassword;
     @BindView(R.id.input_layout_password)
@@ -104,17 +110,33 @@ public class CreateAccountFragment extends BaseFragment {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         helper.dismissDialog();
+                        finish(EmailAuthActivity.RESULT_OK, EmailAuthProvider.PROVIDER_ID);
                     }
                 });
     }
 
     private void handlerException(Exception e) {
         if (e instanceof FirebaseAuthUserCollisionException) {
+
+            CompleteListener<String> listener = new CompleteListener<String>() {
+                @Override
+                public void onComplete(String args) {
+                    finish(EmailAuthActivity.RESULT_CANCELED, args);
+                }
+            };
+
             CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(helper);
-            collisionAccountHandler.show(inputEmail.getText().toString(), getFragmentManager());
+            collisionAccountHandler.show(inputEmail.getText().toString(), getFragmentManager(), listener);
         } else {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void finish(int resultCode, String providerId) {
+        String email = inputEmail.getText().toString();
+        String password = inputPassword.getText().toString();
+        Intent intent = EmailAuthActivity.createResultIntent(providerId, email, password);
+        helper.finishActivity(resultCode, intent);
     }
 
 

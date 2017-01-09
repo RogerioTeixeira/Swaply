@@ -11,6 +11,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.ui.auth.CompleteListener;
 
 /**
  * Created by rogerio on 07/01/2017.
@@ -21,9 +22,9 @@ public class DialogCollisionError extends DialogFragment {
     private final static String TAG = "DialogCollisionError";
     private static final String EMAIL_PARAM = "email";
     private static final String PROVIDER_PARAM = "provider_id";
-    private DialogClickListener listener;
+    private CompleteListener<String> listener;
 
-    public DialogCollisionError setDialogClickListener(DialogClickListener listener) {
+    public DialogCollisionError setDialogClickListener(CompleteListener<String> listener) {
         this.listener = listener;
         return this;
     }
@@ -59,12 +60,12 @@ public class DialogCollisionError extends DialogFragment {
                 .setTitle("Attenzione")
                 .setPositiveButton("Accedi", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.onYesClick(providerId);
+                        listener.onComplete(providerId);
                     }
                 })
                 .setNegativeButton("Cancella", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.onNoClick();
+
                     }
                 });
         // Create the AlertDialog object and return it
@@ -72,23 +73,17 @@ public class DialogCollisionError extends DialogFragment {
 
     }
 
-    public interface DialogClickListener {
-        void onYesClick(String providerId);
-
-        void onNoClick();
-    }
-
     public static class Builder {
         private final String email;
         private final String providerId;
-        private DialogClickListener listener;
+        private CompleteListener<String> listener;
 
         public Builder(String email, String providerId) {
             this.email = email;
             this.providerId = providerId;
         }
 
-        public Builder setDialogClickListener(DialogClickListener listener) {
+        public Builder setDialogClickListener(CompleteListener<String> listener) {
             this.listener = listener;
             return this;
         }

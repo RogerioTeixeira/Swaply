@@ -1,5 +1,7 @@
 package com.rogerio.tex.swaply.ui.auth;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -21,6 +23,9 @@ import butterknife.BindView;
 
 public class EmailAuthActivity extends BaseActivity {
 
+    public static final String EXTRA_PARAM_ID = "EXTRA_PROVIDE_ID";
+    public static final int RESULT_COLLISION = 30;
+    public static final int REQUEST_CODE = 100;
     private static final int INDEX_TAB_LOGIN = 0;
     private static final int INDEX_TAB_CREATE = 1;
     @BindView(R.id.toolbar)
@@ -31,6 +36,23 @@ public class EmailAuthActivity extends BaseActivity {
     AppBarLayout appbarlayout;
     @BindView(R.id.pager)
     ViewPager pager;
+
+    public static Intent createResultIntent(String provideId, String email, String password) {
+        Intent intent = new Intent();
+        ResultEmailActivity resultEmailActivity = new ResultEmailActivity(email, password, provideId);
+        intent.putExtra(EXTRA_PARAM_ID, resultEmailActivity);
+        return intent;
+    }
+
+    public static void startActivity(Activity activity) {
+        Intent intent = new Intent(activity, EmailAuthActivity.class);
+        activity.startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    public static ResultEmailActivity getResultEmailActivity(Intent intent) {
+        ResultEmailActivity resultEmailActivity = intent.getParcelableExtra(EXTRA_PARAM_ID);
+        return resultEmailActivity;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

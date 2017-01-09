@@ -40,7 +40,7 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
     }
 
     private void initFacebook() {
-        AppCompatActivity activity = weakActivity.get();
+        AppCompatActivity activity = appCompatActivity;
         FacebookSdk.sdkInitialize(activity.getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
 
@@ -58,7 +58,7 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
 
     @Override
     public void startLogin() {
-        Activity activity = weakActivity.get();
+        Activity activity = appCompatActivity;
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(callbackManager, this);
         List<String> permission = new ArrayList<String>();
@@ -70,8 +70,8 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
 
     @Override
     public void onSuccess(final LoginResult loginResult) {
-        if (weakAuthCallback != null) {
-            AuthCallback mAuthCallback = weakAuthCallback.get();
+        if (authCallback != null) {
+            AuthCallback mAuthCallback = authCallback;
             AccessToken accessToken = loginResult.getAccessToken();
             AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
             mAuthCallback.onSuccess(credential);

@@ -41,7 +41,7 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     }
 
     private void initGoogleService() {
-        AppCompatActivity activity = weakActivity.get();
+        AppCompatActivity activity = appCompatActivity;
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .requestIdToken(activity.getString(R.string.default_web_client_id))
@@ -69,8 +69,8 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess() && weakAuthCallback != null) {
-                AuthCallback mAuthCallback = weakAuthCallback.get();
+            if (result.isSuccess() && authCallback != null) {
+                AuthCallback mAuthCallback = authCallback;
                 GoogleSignInAccount account = result.getSignInAccount();
                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                 mAuthCallback.onSuccess(credential);
@@ -80,7 +80,7 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
 
     @Override
     public void startLogin() {
-        Activity activity = weakActivity.get();
+        Activity activity = appCompatActivity;
         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         activity.startActivityForResult(signInIntent, RC_SIGN_IN);

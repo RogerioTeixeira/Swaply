@@ -1,9 +1,7 @@
 package com.rogerio.tex.swaply.ui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.StringRes;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,11 +42,6 @@ public class BaseHelper {
 
     public FirebaseUser getCurrentUser() {
         return getFirebaseAuth().getCurrentUser();
-    }
-
-    public void finishActivity(Activity activity, int resultCode, Intent intent) {
-        activity.setResult(resultCode, intent);
-        activity.finish();
     }
 
     public Context getContext() {

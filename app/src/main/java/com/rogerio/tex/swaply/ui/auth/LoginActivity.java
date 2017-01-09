@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.provider.AuthProvider;
+import com.rogerio.tex.swaply.provider.EmailProvider;
 import com.rogerio.tex.swaply.provider.FacebookProvider;
 import com.rogerio.tex.swaply.provider.GoogleProvider;
 import com.rogerio.tex.swaply.provider.TwitterProvider;
@@ -40,6 +42,8 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     Button signInButtonGoogle;
     @BindView(R.id.button_skip)
     Button buttonSkip;
+    @BindView(R.id.sign_in_button_email)
+    Button signInButtonEmail;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private HashMap<String, AuthProvider> authProviderHashMap;
@@ -52,6 +56,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
         authProviderHashMap.put(GoogleAuthProvider.PROVIDER_ID, new GoogleProvider(this, this));
         authProviderHashMap.put(FacebookAuthProvider.PROVIDER_ID, new FacebookProvider(this, this));
         authProviderHashMap.put(TwitterAuthProvider.PROVIDER_ID, new TwitterProvider(this, this));
+        authProviderHashMap.put(EmailAuthProvider.PROVIDER_ID, new EmailProvider(this, this));
         Log.v(TAG_LOG, "Creazione");
 
     }
@@ -85,8 +90,14 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         for (final AuthProvider authProvider : authProviderHashMap.values()) {
+            Log.v(TAG_LOG, "rimanda:" + authProvider.getProviderId());
             authProvider.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void loginWith(String providerId) {
+
     }
 
     @Override
@@ -130,7 +141,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
         mAuth.signInAnonymously().addOnCompleteListener(this);
     }
 
-    @OnClick({R.id.sign_in_button_facebook, R.id.sign_in_button_twitter, R.id.sign_in_button_google, R.id.button_skip})
+    @OnClick({R.id.sign_in_button_facebook, R.id.sign_in_button_twitter, R.id.sign_in_button_google, R.id.button_skip, R.id.sign_in_button_email})
     public void onClick(View view) {
         AuthProvider authProvider = null;
         switch (view.getId()) {
@@ -142,6 +153,9 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
                 break;
             case R.id.sign_in_button_google:
                 authProvider = authProviderHashMap.get(GoogleAuthProvider.PROVIDER_ID);
+                break;
+            case R.id.sign_in_button_email:
+                authProvider = authProviderHashMap.get(EmailAuthProvider.PROVIDER_ID);
                 break;
             case R.id.button_skip:
                 signInAnonymous();
@@ -158,4 +172,5 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     public void onBackPressed() {
         signInAnonymous();
     }
+
 }
