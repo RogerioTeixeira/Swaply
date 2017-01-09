@@ -97,7 +97,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
 
     @Override
     public void loginWith(String providerId) {
-
+        authProviderHashMap.get(providerId).startLogin();
     }
 
     @Override

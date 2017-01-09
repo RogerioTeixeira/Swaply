@@ -121,7 +121,7 @@ public class CreateAccountFragment extends BaseFragment {
             CompleteListener<String> listener = new CompleteListener<String>() {
                 @Override
                 public void onComplete(String args) {
-                    finish(EmailAuthActivity.RESULT_CANCELED, args);
+                    finish(EmailAuthActivity.RESULT_COLLISION, args);
                 }
             };
 

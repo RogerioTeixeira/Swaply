@@ -2,6 +2,7 @@ package com.rogerio.tex.swaply.provider;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -71,27 +72,16 @@ public class TwitterProvider extends AuthProvider {
             @Override
             public void success(Result<TwitterSession> twitterSessionResult) {
                 Log.v(TAG, "twitter success");
-                if (authCallback == null) {
-                    Log.v(TAG, "twitter callback null");
-                } else {
-                    if (authCallback == null) {
-                        Log.v(TAG, "twitter get callback null");
-                    }
-                }
-
-                if (authCallback != null && authCallback != null) {
-                    Log.v(TAG, "twitter callback");
-                    AuthCallback mAuthCallback = authCallback;
-                    TwitterSession session = twitterSessionResult.data;
-                    AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token,
-                            session.getAuthToken().secret);
-                    mAuthCallback.onSuccess(credential);
-                }
+                TwitterSession session = twitterSessionResult.data;
+                AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token,
+                        session.getAuthToken().secret);
+                authCallback.onSuccess(credential);
             }
 
             @Override
             public void failure(TwitterException e) {
                 Log.e(TAG, "Error twitter login", e);
+                authCallback.onFailure(new Bundle());
             }
         });
 

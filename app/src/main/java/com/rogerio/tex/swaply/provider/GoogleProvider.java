@@ -2,6 +2,7 @@ package com.rogerio.tex.swaply.provider;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,7 +15,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.rogerio.tex.swaply.R;
 
@@ -69,19 +69,24 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess() && authCallback != null) {
-                AuthCallback mAuthCallback = authCallback;
+            if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
-                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                mAuthCallback.onSuccess(credential);
+                authCallback.onSuccess(createProviderResponse(account));
+            } else {
+                authCallback.onFailure(new Bundle());
             }
+
         }
+    }
+
+    private ProviderResponse createProviderResponse(GoogleSignInAccount account) {
+        return new ProviderResponse(account.getEmail(), account.getIdToken(), getProviderId(), account.getDisplayName());
     }
 
     @Override
     public void startLogin() {
         Activity activity = appCompatActivity;
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        //    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         activity.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
