@@ -75,7 +75,7 @@ public class TwitterProvider extends AuthProvider {
                 TwitterSession session = twitterSessionResult.data;
                 AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token,
                         session.getAuthToken().secret);
-                authCallback.onSuccess(credential);
+                // authCallback.onSuccess(credential);
             }
 
             @Override
@@ -86,6 +86,11 @@ public class TwitterProvider extends AuthProvider {
         });
 
 
+    }
+
+    @Override
+    public AuthCredential createAuthCredential(ProviderResponse response) {
+        return TwitterAuthProvider.getCredential(response.getToken(), response.getSecretKey());
     }
 
 

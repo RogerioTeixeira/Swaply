@@ -1,6 +1,7 @@
 package com.rogerio.tex.swaply.ui.auth;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
@@ -23,6 +25,7 @@ import com.rogerio.tex.swaply.provider.AuthProvider;
 import com.rogerio.tex.swaply.provider.EmailProvider;
 import com.rogerio.tex.swaply.provider.FacebookProvider;
 import com.rogerio.tex.swaply.provider.GoogleProvider;
+import com.rogerio.tex.swaply.provider.ProviderResponse;
 import com.rogerio.tex.swaply.provider.TwitterProvider;
 import com.rogerio.tex.swaply.ui.BaseActivity;
 
@@ -32,7 +35,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 
-public class LoginActivity extends BaseActivity implements AuthProvider.AuthCallback, OnCompleteListener<AuthResult> {
+public class LoginActivity extends BaseActivity implements AuthProvider.AuthCallback {
+    public static final int REQUEST_CODE = 102;
     private static final String TAG_LOG = "LoginActivity";
     @BindView(R.id.sign_in_button_facebook)
     Button signInButtonFacebook;
@@ -47,6 +51,11 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private HashMap<String, AuthProvider> authProviderHashMap;
+
+    public static void startActivity(Activity activity) {
+        Intent intent = new Intent(activity, LoginActivity.class);
+        activity.startActivityForResult(intent, REQUEST_CODE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,44 +110,47 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     }
 
     @Override
-    public void onSuccess(AuthCredential credential) {
-        Log.v(TAG_LOG, "Login effettuato:" + credential.getProvider());
-        signinFirebase(credential);
+    public void onSuccess(final ProviderResponse response) {
+
+        AuthProvider authProvider = authProviderHashMap.get(response.getProviderId());
+        AuthCredential authCredential = authProvider.createAuthCredential(response);
+        Log.v(TAG_LOG, "Onsucces");
+        if (authCredential != null) {
+            Log.v(TAG_LOG, "Onsucces cred");
+            helper.showLoadingDialog("");
+            mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    helper.dismissDialog();
+                    if (task.isSuccessful()) {
+
+                    } else {
+                        if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                            handlerUserCollisionException(response.getEmail());
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void handlerUserCollisionException(String email) {
+        CompleteListener<String> listener = new CompleteListener<String>() {
+            @Override
+            public void onComplete(String args) {
+                loginWith(args);
+            }
+        };
+
+        CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(helper);
+        collisionAccountHandler.show(email, getSupportFragmentManager(), listener);
+
     }
 
     @Override
     public void onFailure(Bundle extra) {
-        hideProgressDialog();
+        helper.dismissDialog();
 
-    }
-
-    private void signinFirebase(AuthCredential credential) {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null && user.isAnonymous()) {
-            Log.v(TAG_LOG, "Login firebase link anonymous");
-            user.linkWithCredential(credential).addOnCompleteListener(this);
-            return;
-        }
-
-        mAuth.signInWithCredential(credential).addOnCompleteListener(this, this);
-    }
-
-    @Override
-    public void onComplete(@NonNull Task<AuthResult> task) {
-        hideProgressDialog();
-        if (task.isSuccessful()) {
-            Log.v(TAG_LOG, "Login firebase effettuato:" + task.getResult().getUser().getUid());
-            finish();
-        } else {
-            Log.e(TAG_LOG, "Login firebase ko", task.getException());
-        }
-
-
-    }
-
-    private void signInAnonymous() {
-        showProgressDialog();
-        mAuth.signInAnonymously().addOnCompleteListener(this);
     }
 
     @OnClick({R.id.sign_in_button_facebook, R.id.sign_in_button_twitter, R.id.sign_in_button_google, R.id.button_skip, R.id.sign_in_button_email})
@@ -158,19 +170,18 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
                 authProvider = authProviderHashMap.get(EmailAuthProvider.PROVIDER_ID);
                 break;
             case R.id.button_skip:
-                signInAnonymous();
                 break;
         }
 
         if (authProvider != null) {
-            showProgressDialog();
+            // showProgressDialog();
             authProvider.startLogin();
         }
     }
 
     @Override
     public void onBackPressed() {
-        signInAnonymous();
+
     }
 
 }

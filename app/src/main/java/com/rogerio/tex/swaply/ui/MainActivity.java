@@ -1,7 +1,6 @@
 package com.rogerio.tex.swaply.ui;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -51,8 +50,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user == null) {
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    LoginActivity.startActivity(MainActivity.this);
                 } else {
                     Toast.makeText(MainActivity.this, "Login effettuato:" + user.getProviderId(), Toast.LENGTH_LONG).show();
                 }

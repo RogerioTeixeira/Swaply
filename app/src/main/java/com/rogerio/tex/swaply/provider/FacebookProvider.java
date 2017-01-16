@@ -15,6 +15,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 
 import org.json.JSONException;
@@ -69,16 +70,19 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
         List<String> permission = new ArrayList<String>();
         permission.add("email");
         permission.add("public_profile");
+        Log.w(TAG, "callfacebook");
         loginManager.logInWithReadPermissions(activity, permission);
     }
 
 
     @Override
     public void onSuccess(final LoginResult loginResult) {
+        Log.w(TAG, "callfacebook1");
         AccessToken accessToken = loginResult.getAccessToken();
         GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
+                Log.w(TAG, "callfacebook-complete");
                 if (response.getError() != null) {
                     Log.e(TAG, "Received Facebook error: " + response.getError().getErrorMessage());
                     authCallback.onFailure(new Bundle());
@@ -89,9 +93,10 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
                     authCallback.onFailure(new Bundle());
                 } else {
                     try {
+                        Log.w(TAG, "callfacebook-json:" + object.toString());
                         String email = object.getString("email");
-                        String name = object.getString("first_name") + " " + object.getString("last_name");
-
+                        String name = object.getString("name");
+                        Log.w(TAG, "callfacebook-name:" + name);
                         authCallback.onSuccess(new ProviderResponse(email, loginResult.getAccessToken().getToken(), getProviderId(), name));
                     } catch (JSONException e) {
                         Log.e(TAG, "JSON Exception reading from Facebook GraphRequest", e);
@@ -102,6 +107,10 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
 
             }
         });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,email,picture");
+        request.setParameters(parameters);
+        request.executeAsync();
 
     }
 
@@ -115,6 +124,11 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
     public void onError(FacebookException error) {
         Log.e(TAG, "Error facebook login", error);
         authCallback.onFailure(new Bundle());
+    }
+
+    @Override
+    public AuthCredential createAuthCredential(ProviderResponse response) {
+        return FacebookAuthProvider.getCredential(response.getToken());
     }
 
     @Override

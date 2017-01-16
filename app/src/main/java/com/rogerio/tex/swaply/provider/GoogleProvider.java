@@ -15,6 +15,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.rogerio.tex.swaply.R;
 
@@ -86,9 +87,13 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     @Override
     public void startLogin() {
         Activity activity = appCompatActivity;
-        //    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         activity.startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public AuthCredential createAuthCredential(ProviderResponse response) {
+        return GoogleAuthProvider.getCredential(response.getToken(), null);
     }
 
     @Override

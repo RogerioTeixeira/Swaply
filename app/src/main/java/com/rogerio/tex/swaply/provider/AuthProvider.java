@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.firebase.auth.AuthCredential;
+
 /**
  * Created by Rogerio Lavoro on 02/12/2016.
  */
@@ -38,6 +40,8 @@ public abstract class AuthProvider {
     public abstract void onActivityResult(int requestCode, int resultCode, Intent data);
 
     public abstract void startLogin();
+
+    public abstract AuthCredential createAuthCredential(ProviderResponse response);
 
     public interface AuthCallback {
         void onSuccess(ProviderResponse response);

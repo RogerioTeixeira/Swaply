@@ -46,8 +46,7 @@ public class EmailProvider extends AuthProvider {
                 case EmailAuthActivity.RESULT_OK:
                     resultEmailActivity = EmailAuthActivity.getResultEmailActivity(data);
                     if (resultEmailActivity != null) {
-                        AuthCredential authCredential = EmailAuthProvider.getCredential(resultEmailActivity.getEmail(), resultEmailActivity.getPassword());
-                        authCallback.onSuccess(authCredential);
+                        authCallback.onSuccess(new ProviderResponse(resultEmailActivity.getEmail(), null, resultEmailActivity.getProvideId(), null));
                     }
                     break;
                 case EmailAuthActivity.RESULT_COLLISION:
@@ -68,5 +67,10 @@ public class EmailProvider extends AuthProvider {
     @Override
     public void startLogin() {
         EmailAuthActivity.startActivity(appCompatActivity);
+    }
+
+    @Override
+    public AuthCredential createAuthCredential(ProviderResponse response) {
+        return null;
     }
 }
