@@ -12,10 +12,13 @@ import com.rogerio.tex.swaply.R;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.models.User;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -73,9 +76,7 @@ public class TwitterProvider extends AuthProvider {
             public void success(Result<TwitterSession> twitterSessionResult) {
                 Log.v(TAG, "twitter success");
                 TwitterSession session = twitterSessionResult.data;
-                AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token,
-                        session.getAuthToken().secret);
-                // authCallback.onSuccess(credential);
+                getUserData(session);
             }
 
             @Override
@@ -84,7 +85,35 @@ public class TwitterProvider extends AuthProvider {
                 authCallback.onFailure(new Bundle());
             }
         });
+    }
 
+    public void getUserData(final TwitterSession session) {
+        TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
+        twitterApiClient.getAccountService().verifyCredentials(false, false).enqueue(new Callback<User>() {
+            @Override
+            public void success(Result<User> userResult) {
+
+                String name = userResult.data.name;
+                String profileurl = userResult.data.profileImageUrl;
+                String mail = userResult.data.email;
+                Log.v(TAG, "getUserData-name:" + name);
+                Log.v(TAG, "getUserData-photo:" + profileurl);
+
+                AuthResponse response = AuthResponse.Builder.create(getProviderId())
+                        .setToken(session.getAuthToken().token)
+                        .setSecretKey(session.getAuthToken().secret)
+                        .setSuccessful(true)
+                        .setName(name)
+                        .setPhotoUrl(profileurl)
+                        .build();
+                authCallback.onSuccess(response);
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+                Log.e(TAG, "getUserData", e);
+            }
+        });
 
     }
 

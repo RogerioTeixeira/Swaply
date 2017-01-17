@@ -3,11 +3,13 @@ package com.rogerio.tex.swaply.ui;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
+
 import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    protected ActivityHelper helper;
+    private ActivityHelper helper;
 
     protected abstract int getLayoutResource();
 
@@ -15,7 +17,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
-        helper = new ActivityHelper(this);
         ButterKnife.bind(this);
 
     }
@@ -24,7 +25,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        helper.dismissDialog();
+        if (helper != null) {
+            helper.dismissDialog();
+        }
+    }
+
+    protected ActivityHelper getActivityHelper() {
+        if (helper == null) {
+            helper = new ActivityHelper(this);
+        }
+        return helper;
     }
 
 

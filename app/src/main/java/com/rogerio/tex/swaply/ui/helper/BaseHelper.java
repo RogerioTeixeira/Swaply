@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui;
+package com.rogerio.tex.swaply.ui.helper;
 
 import android.app.ProgressDialog;
 import android.content.Context;

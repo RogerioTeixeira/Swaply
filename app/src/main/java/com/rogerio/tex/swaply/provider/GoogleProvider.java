@@ -81,7 +81,14 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     }
 
     private AuthResponse createProviderResponse(GoogleSignInAccount account) {
-        return new AuthResponse(account.getEmail(), account.getIdToken(), getProviderId(), account.getDisplayName());
+        AuthResponse response = AuthResponse.Builder.create(getProviderId())
+                .setToken(account.getIdToken())
+                .setEmail(account.getEmail())
+                .setName(account.getDisplayName())
+                .setPhotoUrl(account.getPhotoUrl().getPath())
+                .setSuccessful(true)
+                .build();
+        return response;
     }
 
     @Override

@@ -19,7 +19,7 @@ import com.google.firebase.auth.TwitterAuthProvider;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.provider.AuthResponse;
-import com.rogerio.tex.swaply.ui.ActivityHelper;
+import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
 
 /**
  * Created by rogerio on 07/01/2017.
@@ -108,7 +108,11 @@ public class CollisionAccountHandler {
                     .setPositiveButton("Accedi", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             if (listener != null) {
-                                listener.onComplete(new AuthResponse(mail, null, providerId, null));
+                                AuthResponse response = AuthResponse.Builder.create(providerId)
+                                        .setSuccessful(true)
+                                        .setEmail(mail)
+                                        .build();
+                                listener.onComplete(response);
                             }
                         }
                     })

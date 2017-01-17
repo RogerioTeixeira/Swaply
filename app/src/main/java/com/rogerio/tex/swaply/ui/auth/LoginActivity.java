@@ -123,7 +123,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
             AuthCredential authCredential = authProvider.createAuthCredential(response);
             Log.v(TAG_LOG, "Onsucces");
             if (authCredential != null) {
-                helper.showLoadingDialog("");
+                getActivityHelper().showLoadingDialog("");
                 mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -131,7 +131,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
                             finish(response);
                         } else {
                             if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                handlerUserCollisionException(response.getEmail());
+                                handlerUserCollisionException(response.getUser().getEmail());
                             }
                         }
                     }
@@ -143,7 +143,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     private void finish(AuthResponse response) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_PARAM_ID, response);
-        helper.finishActivity(Activity.RESULT_OK, intent);
+        getActivityHelper().finishActivity(Activity.RESULT_OK, intent);
     }
 
     private void handlerUserCollisionException(String email) {
@@ -154,14 +154,14 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
             }
         };
 
-        CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(helper);
+        CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(getActivityHelper());
         collisionAccountHandler.show(email, getSupportFragmentManager(), listener);
 
     }
 
     @Override
     public void onFailure(Bundle extra) {
-        helper.dismissDialog();
+        getActivityHelper().dismissDialog();
 
     }
 

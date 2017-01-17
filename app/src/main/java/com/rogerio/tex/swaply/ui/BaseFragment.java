@@ -1,36 +1,24 @@
 package com.rogerio.tex.swaply.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
+
 import butterknife.ButterKnife;
 
 
 public abstract class BaseFragment extends Fragment {
-    protected FragmentHelper helper;
+    private ActivityHelper helper;
 
     public BaseFragment() {
         // Required empty public constructor
     }
 
     protected abstract int getFragmentLayout();
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        helper = new FragmentHelper(this);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,8 +35,17 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        helper.dismissDialog();
+        if (helper != null) {
+            helper.dismissDialog();
+        }
 
+    }
+
+    protected ActivityHelper getActivityHelper() {
+        if (helper == null) {
+            helper = new ActivityHelper(getActivity());
+        }
+        return helper;
     }
 
 }

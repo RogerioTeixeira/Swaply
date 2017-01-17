@@ -40,7 +40,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateAccountFragment extends BaseFragment implements CompleteListener<AuthResponse> {
+public class CreateAccountFragment extends BaseFragment {
 
     private final static String TAG = CreateAccountFragment.class.getSimpleName();
 
@@ -70,52 +70,57 @@ public class CreateAccountFragment extends BaseFragment implements CompleteListe
     }
 
     private void CreateAccountMail(final String email, final String password) {
-        helper.showLoadingDialog("");
-        helper.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
+        getActivityHelper().showLoadingDialog("");
+        getActivityHelper().getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Errore creazione account email"))
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        helper.dismissDialog();
-                        handlerException(e);
+                        getActivityHelper().dismissDialog();
+                        if (e instanceof FirebaseAuthUserCollisionException) {
+                            handlerCollisionException(email);
+                        } else {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
                 })
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        helper.dismissDialog();
+                        getActivityHelper().dismissDialog();
                         if (listener != null) {
-                            listener.onNewUser(new AuthResponse(authResult.getUser().getEmail(), null, EmailAuthProvider.PROVIDER_ID, null));
+                            AuthResponse response = AuthResponse.Builder.create(EmailAuthProvider.PROVIDER_ID)
+                                    .setEmail(email)
+                                    .setSuccessful(true)
+                                    .build();
+                            listener.onNewUser(response);
                         }
                     }
                 });
     }
 
-    private void handlerException(Exception e) {
-        if (e instanceof FirebaseAuthUserCollisionException) {
-            CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(helper);
-            collisionAccountHandler.show(inputEmail.getText().toString(), getFragmentManager(), this);
-        } else {
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+    private void handlerCollisionException(String email) {
+        CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(getActivityHelper());
+        collisionAccountHandler.show(email, getFragmentManager(), new CompleteListener<AuthResponse>() {
+            @Override
+            public void onComplete(AuthResponse response) {
+                if (listener != null) {
+                    if (response.getProviderId() == EmailAuthProvider.PROVIDER_ID) {
+                        listener.onExistingEmailUser(response);
+                    } else {
+                        listener.onExistingIdpUser(response);
+                    }
+                }
+            }
+        });
     }
 
-    @Override
-    public void onComplete(AuthResponse response) {
-        if (listener != null) {
-            if (response.getProviderId() == EmailAuthProvider.PROVIDER_ID) {
-                listener.onExistingEmailUser(response);
-            } else {
-                listener.onExistingIdpUser(response);
-            }
-        }
-    }
 
     private void finish(int resultCode, String providerId) {
         String email = inputEmail.getText().toString();
         String password = inputPassword.getText().toString();
         Intent intent = EmailAuthActivity.createResultIntent(providerId, email, password);
-        helper.finishActivity(resultCode, intent);
+        getActivityHelper().finishActivity(resultCode, intent);
     }
 
     @Override

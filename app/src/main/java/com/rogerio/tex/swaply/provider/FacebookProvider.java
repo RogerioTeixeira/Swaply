@@ -84,22 +84,26 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
             public void onCompleted(JSONObject object, GraphResponse response) {
                 Log.w(TAG, "callfacebook-complete");
                 if (response.getError() != null) {
-                    Log.e(TAG, "Received Facebook error: " + response.getError().getErrorMessage());
                     authCallback.onFailure(new Bundle());
                     return;
                 }
                 if (object == null) {
-                    Log.w(TAG, "Received null response from Facebook GraphRequest");
                     authCallback.onFailure(new Bundle());
                 } else {
                     try {
-                        Log.w(TAG, "callfacebook-json:" + object.toString());
                         String email = object.getString("email");
                         String name = object.getString("name");
-                        Log.w(TAG, "callfacebook-name:" + name);
-                        authCallback.onSuccess(new AuthResponse(email, loginResult.getAccessToken().getToken(), getProviderId(), name));
+                        String picture = object.getString("picture");
+                        AuthResponse authResponse = AuthResponse.Builder.create(getProviderId())
+                                .setToken(loginResult.getAccessToken().getToken())
+                                .setSuccessful(true)
+                                .setEmail(email)
+                                .setName(name)
+                                .setPhotoUrl(picture)
+                                .build();
+
+                        authCallback.onSuccess(authResponse);
                     } catch (JSONException e) {
-                        Log.e(TAG, "JSON Exception reading from Facebook GraphRequest", e);
                         authCallback.onFailure(new Bundle());
                     }
                 }
