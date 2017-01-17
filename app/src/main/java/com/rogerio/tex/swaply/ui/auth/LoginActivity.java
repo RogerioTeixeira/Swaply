@@ -22,10 +22,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.provider.AuthProvider;
+import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.provider.EmailProvider;
 import com.rogerio.tex.swaply.provider.FacebookProvider;
 import com.rogerio.tex.swaply.provider.GoogleProvider;
-import com.rogerio.tex.swaply.provider.ProviderResponse;
 import com.rogerio.tex.swaply.provider.TwitterProvider;
 import com.rogerio.tex.swaply.ui.BaseActivity;
 
@@ -38,6 +38,8 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivity implements AuthProvider.AuthCallback {
     public static final int REQUEST_CODE = 102;
     private static final String TAG_LOG = "LoginActivity";
+    private static final String EXTRA_PARAM_ID = "EXTRA_AUTH_PARAM";
+
     @BindView(R.id.sign_in_button_facebook)
     Button signInButtonFacebook;
     @BindView(R.id.sign_in_button_twitter)
@@ -55,6 +57,10 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     public static void startActivity(Activity activity) {
         Intent intent = new Intent(activity, LoginActivity.class);
         activity.startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    public static AuthResponse getResultData(Intent intent) {
+        return intent.getParcelableExtra(EXTRA_PARAM_ID);
     }
 
     @Override
@@ -94,7 +100,6 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -110,35 +115,42 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     }
 
     @Override
-    public void onSuccess(final ProviderResponse response) {
-
-        AuthProvider authProvider = authProviderHashMap.get(response.getProviderId());
-        AuthCredential authCredential = authProvider.createAuthCredential(response);
-        Log.v(TAG_LOG, "Onsucces");
-        if (authCredential != null) {
-            Log.v(TAG_LOG, "Onsucces cred");
-            helper.showLoadingDialog("");
-            mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    helper.dismissDialog();
-                    if (task.isSuccessful()) {
-
-                    } else {
-                        if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                            handlerUserCollisionException(response.getEmail());
+    public void onSuccess(final AuthResponse response) {
+        if (response.getProviderId() == EmailAuthProvider.PROVIDER_ID) {
+            finish(response);
+        } else {
+            AuthProvider authProvider = authProviderHashMap.get(response.getProviderId());
+            AuthCredential authCredential = authProvider.createAuthCredential(response);
+            Log.v(TAG_LOG, "Onsucces");
+            if (authCredential != null) {
+                helper.showLoadingDialog("");
+                mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            finish(response);
+                        } else {
+                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                handlerUserCollisionException(response.getEmail());
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
+    private void finish(AuthResponse response) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_PARAM_ID, response);
+        helper.finishActivity(Activity.RESULT_OK, intent);
+    }
+
     private void handlerUserCollisionException(String email) {
-        CompleteListener<String> listener = new CompleteListener<String>() {
+        CompleteListener<AuthResponse> listener = new CompleteListener<AuthResponse>() {
             @Override
-            public void onComplete(String args) {
-                loginWith(args);
+            public void onComplete(AuthResponse response) {
+                authProviderHashMap.get(response.getProviderId()).startLogin();
             }
         };
 

@@ -14,6 +14,8 @@
     <color name="material_lime_a700">#AEEA00</color>
     <color name="material_purple_a700">#AA00FF</color>
 
+    <color name="color_menu">#212121</color>
+
 
     <color name="button_default">#66bb6a</color>
     <color name="button_default_pressed">#a5d6a7</color>

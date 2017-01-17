@@ -80,8 +80,8 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
         }
     }
 
-    private ProviderResponse createProviderResponse(GoogleSignInAccount account) {
-        return new ProviderResponse(account.getEmail(), account.getIdToken(), getProviderId(), account.getDisplayName());
+    private AuthResponse createProviderResponse(GoogleSignInAccount account) {
+        return new AuthResponse(account.getEmail(), account.getIdToken(), getProviderId(), account.getDisplayName());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     }
 
     @Override
-    public AuthCredential createAuthCredential(ProviderResponse response) {
+    public AuthCredential createAuthCredential(AuthResponse response) {
         return GoogleAuthProvider.getCredential(response.getToken(), null);
     }
 

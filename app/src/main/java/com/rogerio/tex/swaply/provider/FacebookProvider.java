@@ -97,7 +97,7 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
                         String email = object.getString("email");
                         String name = object.getString("name");
                         Log.w(TAG, "callfacebook-name:" + name);
-                        authCallback.onSuccess(new ProviderResponse(email, loginResult.getAccessToken().getToken(), getProviderId(), name));
+                        authCallback.onSuccess(new AuthResponse(email, loginResult.getAccessToken().getToken(), getProviderId(), name));
                     } catch (JSONException e) {
                         Log.e(TAG, "JSON Exception reading from Facebook GraphRequest", e);
                         authCallback.onFailure(new Bundle());
@@ -127,7 +127,7 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
     }
 
     @Override
-    public AuthCredential createAuthCredential(ProviderResponse response) {
+    public AuthCredential createAuthCredential(AuthResponse response) {
         return FacebookAuthProvider.getCredential(response.getToken());
     }
 

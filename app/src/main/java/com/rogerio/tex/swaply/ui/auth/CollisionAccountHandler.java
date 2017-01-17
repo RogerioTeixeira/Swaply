@@ -18,6 +18,7 @@ import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
+import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.ui.ActivityHelper;
 
 /**
@@ -35,7 +36,7 @@ public class CollisionAccountHandler {
     }
 
 
-    public void show(final String email, final FragmentManager fm, @NonNull final CompleteListener<String> listener) {
+    public void show(final String email, final FragmentManager fm, @NonNull final CompleteListener<AuthResponse> listener) {
         FirebaseAuth firebaseAuth = helper.getFirebaseAuth();
         helper.showLoadingDialog("");
         firebaseAuth.fetchProvidersForEmail(email)
@@ -59,7 +60,7 @@ public class CollisionAccountHandler {
         private final static String TAG = "DialogCollisionError";
         private static final String EMAIL_PARAM = "email";
         private static final String PROVIDER_PARAM = "provider_id";
-        private CompleteListener<String> listener;
+        private CompleteListener<AuthResponse> listener;
 
         public static DialogCollisionError Make(String email, String providerId) {
             DialogCollisionError fragment = new DialogCollisionError();
@@ -70,7 +71,7 @@ public class CollisionAccountHandler {
             return fragment;
         }
 
-        public DialogCollisionError setDialogClickListener(CompleteListener<String> listener) {
+        public DialogCollisionError setDialogClickListener(CompleteListener<AuthResponse> listener) {
             this.listener = listener;
             return this;
         }
@@ -98,7 +99,7 @@ public class CollisionAccountHandler {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            String mail = getArguments().getString(EMAIL_PARAM);
+            final String mail = getArguments().getString(EMAIL_PARAM);
             final String providerId = getArguments().getString(PROVIDER_PARAM);
             String providerName = getProviderName(providerId);
             String testo = String.format(getResources().getString(R.string.message_email_collision), mail, providerName);
@@ -107,7 +108,7 @@ public class CollisionAccountHandler {
                     .setPositiveButton("Accedi", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             if (listener != null) {
-                                listener.onComplete(providerId);
+                                listener.onComplete(new AuthResponse(mail, null, providerId, null));
                             }
                         }
                     })

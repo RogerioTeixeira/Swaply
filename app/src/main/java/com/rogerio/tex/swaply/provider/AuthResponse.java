@@ -8,16 +8,16 @@ import android.support.annotation.Nullable;
  * Created by Rogerio Lavoro on 09/01/2017.
  */
 
-public class ProviderResponse implements Parcelable {
-    public static final Parcelable.Creator<ProviderResponse> CREATOR = new Parcelable.Creator<ProviderResponse>() {
+public class AuthResponse implements Parcelable {
+    public static final Parcelable.Creator<AuthResponse> CREATOR = new Parcelable.Creator<AuthResponse>() {
         @Override
-        public ProviderResponse createFromParcel(Parcel source) {
-            return new ProviderResponse(source);
+        public AuthResponse createFromParcel(Parcel source) {
+            return new AuthResponse(source);
         }
 
         @Override
-        public ProviderResponse[] newArray(int size) {
-            return new ProviderResponse[size];
+        public AuthResponse[] newArray(int size) {
+            return new AuthResponse[size];
         }
     };
     @Nullable
@@ -26,14 +26,14 @@ public class ProviderResponse implements Parcelable {
     private final String providerId;
     private final String secretKey;
 
-    public ProviderResponse(String email, String token, String providerId, String secretKey) {
+    public AuthResponse(String email, String token, String providerId, String secretKey) {
         this.email = email;
         this.token = token;
         this.providerId = providerId;
         this.secretKey = secretKey;
     }
 
-    protected ProviderResponse(Parcel in) {
+    protected AuthResponse(Parcel in) {
         this.email = in.readString();
         this.token = in.readString();
         this.providerId = in.readString();

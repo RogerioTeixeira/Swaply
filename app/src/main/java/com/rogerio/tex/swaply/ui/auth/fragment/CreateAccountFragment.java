@@ -1,6 +1,7 @@
 package com.rogerio.tex.swaply.ui.auth.fragment;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
+import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.ui.BaseFragment;
 import com.rogerio.tex.swaply.ui.auth.CollisionAccountHandler;
 import com.rogerio.tex.swaply.ui.auth.CompleteListener;
@@ -38,7 +40,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateAccountFragment extends BaseFragment {
+public class CreateAccountFragment extends BaseFragment implements CompleteListener<AuthResponse> {
 
     private final static String TAG = CreateAccountFragment.class.getSimpleName();
 
@@ -61,43 +63,15 @@ public class CreateAccountFragment extends BaseFragment {
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
     private Form formValidation;
-
+    private CreateEmailListener listener;
 
     public CreateAccountFragment() {
         // Required empty public constructor
     }
 
-
-    /*
-    @Override
-    public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
-        Toast.makeText(getContext(), "Validazione ok", Toast.LENGTH_LONG).show();
-        Snackbar.make(coordinatorLayout, "Validazione ok", Snackbar.LENGTH_LONG)
-                .setActionTextColor(Color.RED)
-                .show();
-    }
-
-
-
-    @Override
-    public void onFormValidationFailed(List<FormValidationResult> validationResults) {
-        Toast.makeText(getContext(), "Validazione ko", Toast.LENGTH_LONG).show();
-
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "", Snackbar.LENGTH_LONG);
-        View sbView = snackbar.getView();
-        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.RED);
-        snackbar.show();
-
-        DialogFragment newFragment = new AlertAccount();
-        newFragment.show(getFragmentManager(), "missiles");
-
-    }*/
-
-
-    private void CreateAccountMail(String mail, String password) {
+    private void CreateAccountMail(final String email, final String password) {
         helper.showLoadingDialog("");
-        helper.getFirebaseAuth().createUserWithEmailAndPassword(mail, password)
+        helper.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Errore creazione account email"))
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -110,25 +84,30 @@ public class CreateAccountFragment extends BaseFragment {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         helper.dismissDialog();
-                        finish(EmailAuthActivity.RESULT_OK, EmailAuthProvider.PROVIDER_ID);
+                        if (listener != null) {
+                            listener.onNewUser(new AuthResponse(authResult.getUser().getEmail(), null, EmailAuthProvider.PROVIDER_ID, null));
+                        }
                     }
                 });
     }
 
     private void handlerException(Exception e) {
         if (e instanceof FirebaseAuthUserCollisionException) {
-
-            CompleteListener<String> listener = new CompleteListener<String>() {
-                @Override
-                public void onComplete(String args) {
-                    finish(EmailAuthActivity.RESULT_COLLISION, args);
-                }
-            };
-
             CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(helper);
-            collisionAccountHandler.show(inputEmail.getText().toString(), getFragmentManager(), listener);
+            collisionAccountHandler.show(inputEmail.getText().toString(), getFragmentManager(), this);
         } else {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onComplete(AuthResponse response) {
+        if (listener != null) {
+            if (response.getProviderId() == EmailAuthProvider.PROVIDER_ID) {
+                listener.onExistingEmailUser(response);
+            } else {
+                listener.onExistingIdpUser(response);
+            }
         }
     }
 
@@ -139,12 +118,10 @@ public class CreateAccountFragment extends BaseFragment {
         helper.finishActivity(resultCode, intent);
     }
 
-
     @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_create_account;
     }
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -186,6 +163,33 @@ public class CreateAccountFragment extends BaseFragment {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         ButterKnife.bind(this, rootView);
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof CreateEmailListener) {
+            listener = (CreateEmailListener) context;
+        }
+    }
+
+    interface CreateEmailListener {
+
+        /**
+         * Email entered belongs to an existing email user.
+         */
+        void onExistingEmailUser(AuthResponse response);
+
+        /**
+         * Email entered belongs to an existing IDP user.
+         */
+        void onExistingIdpUser(AuthResponse response);
+
+        /**
+         * Email entered does not beling to an existing user.
+         */
+        void onNewUser(AuthResponse response);
+
     }
 
 }

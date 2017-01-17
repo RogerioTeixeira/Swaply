@@ -59,8 +59,8 @@ public class EmailAuthActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setSupportActionBar(toolbar);
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new EmailLoginFragment(), "Accedi");
-        adapter.addFragment(new CreateAccountFragment(), "Crea Account");
+        adapter.addFragment(new EmailLoginFragment(), getResources().getString(R.string.title_toolbar_login));
+        adapter.addFragment(new CreateAccountFragment(), getResources().getString(R.string.title_toolbar_create));
         pager.setAdapter(adapter);
         tablayout.setupWithViewPager(pager);
         setToobarTitle(tablayout.getSelectedTabPosition());

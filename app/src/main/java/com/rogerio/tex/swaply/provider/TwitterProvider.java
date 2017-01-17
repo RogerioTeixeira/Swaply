@@ -89,7 +89,7 @@ public class TwitterProvider extends AuthProvider {
     }
 
     @Override
-    public AuthCredential createAuthCredential(ProviderResponse response) {
+    public AuthCredential createAuthCredential(AuthResponse response) {
         return TwitterAuthProvider.getCredential(response.getToken(), response.getSecretKey());
     }
 

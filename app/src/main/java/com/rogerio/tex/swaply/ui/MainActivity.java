@@ -1,6 +1,8 @@
 package com.rogerio.tex.swaply.ui;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -8,6 +10,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.ui.auth.LoginActivity;
 
 import butterknife.BindView;
@@ -52,7 +56,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 if (user == null) {
                     LoginActivity.startActivity(MainActivity.this);
                 } else {
-                    Toast.makeText(MainActivity.this, "Login effettuato:" + user.getProviderId(), Toast.LENGTH_LONG).show();
+                    // Toast.makeText(MainActivity.this, "Login effettuato:" + user.getProviderId(), Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -92,6 +96,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v("MainProva", "onActivity-request:" + requestCode);
+        Log.v("MainProva", "onActivity-result:" + resultCode);
+        if (requestCode == LoginActivity.REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            AuthResponse response = LoginActivity.getResultData(data);
+
+            if (response != null) {
+                Toast.makeText(this, "Sei loggato con:" + response.getProviderId(), Toast.LENGTH_LONG).show();
+            } else {
+                Log.v("MainProva", "onActivity-result null:" + resultCode);
+            }
         }
     }
 }

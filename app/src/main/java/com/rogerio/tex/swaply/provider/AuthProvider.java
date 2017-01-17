@@ -41,10 +41,10 @@ public abstract class AuthProvider {
 
     public abstract void startLogin();
 
-    public abstract AuthCredential createAuthCredential(ProviderResponse response);
+    public abstract AuthCredential createAuthCredential(AuthResponse response);
 
     public interface AuthCallback {
-        void onSuccess(ProviderResponse response);
+        void onSuccess(AuthResponse response);
 
         void onFailure(Bundle extra);
 
