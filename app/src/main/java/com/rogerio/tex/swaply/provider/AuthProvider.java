@@ -47,7 +47,5 @@ public abstract class AuthProvider {
         void onSuccess(AuthResponse response);
 
         void onFailure(Bundle extra);
-
-        void loginWith(String providerId);
     }
 }

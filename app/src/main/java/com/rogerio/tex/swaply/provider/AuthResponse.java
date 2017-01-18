@@ -118,13 +118,17 @@ public class AuthResponse implements Parcelable {
         private String email;
         private String photoUrl;
 
+        private Builder() {
 
-        private Builder(String providerId) {
-            this.providerId = providerId;
         }
 
-        public static Builder create(String providerId) {
-            return new Builder(providerId);
+        public static Builder create() {
+            return new Builder();
+        }
+
+        public Builder setProviderId(String providerId) {
+            this.providerId = providerId;
+            return this;
         }
 
         public Builder setName(String name) {

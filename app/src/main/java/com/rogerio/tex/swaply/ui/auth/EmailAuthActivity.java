@@ -10,10 +10,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.ui.BaseActivity;
 import com.rogerio.tex.swaply.ui.auth.fragment.CreateAccountFragment;
+import com.rogerio.tex.swaply.ui.auth.fragment.EmailAuthFragment;
 import com.rogerio.tex.swaply.ui.auth.fragment.EmailLoginFragment;
 
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class EmailAuthActivity extends BaseActivity {
+public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment.EmailAuthListener {
 
     public static final String EXTRA_PARAM_ID = "EXTRA_PROVIDE_ID";
     public static final int RESULT_COLLISION = 30;
@@ -37,10 +40,9 @@ public class EmailAuthActivity extends BaseActivity {
     @BindView(R.id.pager)
     ViewPager pager;
 
-    public static Intent createResultIntent(String provideId, String email, String password) {
+    public static Intent createResultIntent(AuthResponse response) {
         Intent intent = new Intent();
-        ResultEmailActivity resultEmailActivity = new ResultEmailActivity(email, password, provideId);
-        intent.putExtra(EXTRA_PARAM_ID, resultEmailActivity);
+        intent.putExtra(EXTRA_PARAM_ID, response);
         return intent;
     }
 
@@ -49,9 +51,9 @@ public class EmailAuthActivity extends BaseActivity {
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
-    public static ResultEmailActivity getResultEmailActivity(Intent intent) {
-        ResultEmailActivity resultEmailActivity = intent.getParcelableExtra(EXTRA_PARAM_ID);
-        return resultEmailActivity;
+    public static AuthResponse getResultData(Intent intent) {
+        AuthResponse response = intent.getParcelableExtra(EXTRA_PARAM_ID);
+        return response;
     }
 
     @Override
@@ -88,6 +90,28 @@ public class EmailAuthActivity extends BaseActivity {
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_email_auth;
+    }
+
+
+    @Override
+    public void onExistingEmailUser(AuthResponse response) {
+        Log.v("onExistingEmailUser", "onExistingEmailUser");
+        pager.setCurrentItem(0);
+        ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
+        if (adapter.getItem(0) instanceof EmailLoginFragment) {
+            EmailLoginFragment fragment = (EmailLoginFragment) adapter.getItem(0);
+            fragment.setEmail(response.getUser().getEmail());
+        }
+    }
+
+    @Override
+    public void onExistingIdpUser(AuthResponse response) {
+
+    }
+
+    @Override
+    public void succesLogin(AuthResponse response) {
+        getActivityHelper().finishActivity(Activity.RESULT_OK, createResultIntent(response));
     }
 
     public static class ViewPagerAdapter extends FragmentStatePagerAdapter {

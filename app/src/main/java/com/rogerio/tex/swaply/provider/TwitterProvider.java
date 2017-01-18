@@ -99,8 +99,9 @@ public class TwitterProvider extends AuthProvider {
                 Log.v(TAG, "getUserData-name:" + name);
                 Log.v(TAG, "getUserData-photo:" + profileurl);
 
-                AuthResponse response = AuthResponse.Builder.create(getProviderId())
+                AuthResponse response = AuthResponse.Builder.create()
                         .setToken(session.getAuthToken().token)
+                        .setProviderId(getProviderId())
                         .setSecretKey(session.getAuthToken().secret)
                         .setSuccessful(true)
                         .setName(name)

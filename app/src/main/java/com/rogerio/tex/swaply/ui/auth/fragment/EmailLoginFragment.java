@@ -2,6 +2,7 @@ package com.rogerio.tex.swaply.ui.auth.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -10,8 +11,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.ui.BaseFragment;
+import com.rogerio.tex.swaply.TaskFailureLogger;
+import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 
@@ -23,21 +29,10 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EmailLoginFragment extends BaseFragment {
+public class EmailLoginFragment extends EmailAuthFragment {
 
+    private final static String TAG = "EmailLoginFragment";
 
-
-    private final Form.onCompleteValidationListener listenerForm = new Form.onCompleteValidationListener() {
-        @Override
-        public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
-            Toast.makeText(getContext(), "Validazione ok", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onFormValidationFailed(List<FormValidationResult> validationResults) {
-            Toast.makeText(getContext(), "Validazione ko", Toast.LENGTH_LONG).show();
-        }
-    };
     @BindView(R.id.input_email)
     TextInputEditText inputEmail;
     @BindView(R.id.input_layout_email)
@@ -68,8 +63,48 @@ public class EmailLoginFragment extends BaseFragment {
         formValidation = new Form.Builder()
                 .addEmailValidationTask(R.string.validate_error_invalid_email, inputEmail, true)
                 .addPasswordValidationTask(R.string.validate_error_invalid_password, inputPassword, true)
-                .addonCompleteValidationListener(listenerForm)
+                .addonCompleteValidationListener(new Form.onCompleteValidationListener() {
+                    @Override
+                    public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
+                        String email = inputEmail.getText().toString();
+                        String password = inputPassword.getText().toString();
+                        loginWithPassword(email, password);
+                    }
+
+                    @Override
+                    public void onFormValidationFailed(List<FormValidationResult> validationResults) {
+
+                    }
+                })
                 .CreateForm();
+    }
+
+    private void loginWithPassword(String email, String password) {
+        getActivityHelper().showLoadingDialog("");
+        getActivityHelper().getFirebaseAuth().signInWithEmailAndPassword(email, password)
+                .addOnFailureListener(new TaskFailureLogger(TAG, "Error signinWithEmail"))
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        AuthResponse response = AuthResponse.Builder.create()
+                                .setSuccessful(true)
+                                .setEmail(authResult.getUser().getEmail())
+                                .setName(authResult.getUser().getDisplayName())
+                                .setProviderId(EmailAuthProvider.PROVIDER_ID)
+                                .build();
+                        listener.succesLogin(response);
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        getActivityHelper().dismissDialog();
+                        Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+                    }
+                });
     }
 
     @OnClick(R.id.btn_accedi)
@@ -80,18 +115,10 @@ public class EmailLoginFragment extends BaseFragment {
 
     }
 
-    /*class PrimeThread extends Thread {
-        @Override
-        public void run() {
-            try {
-                Task<ProviderQueryResult> curTask = getFirebaseAuth().fetchProvidersForEmail("rogerio.teixeiranunes@gmail.com");
-                ProviderQueryResult result = Tasks.await(curTask);
-                if (result.getProviders() != null)
-                    Log.v("test Provider", result.getProviders().toString());
-            } catch (Exception e) {
-                Log.e("test Provider2", "Errore", e);
-            }
-        }
+    public void setEmail(String email) {
+        inputEmail.setText(email);
+        inputPassword.requestFocus();
 
-    }*/
+    }
+
 }

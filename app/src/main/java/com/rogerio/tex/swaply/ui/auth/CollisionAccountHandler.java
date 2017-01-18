@@ -38,18 +38,24 @@ public class CollisionAccountHandler {
 
     public void show(final String email, final FragmentManager fm, @NonNull final CompleteListener<AuthResponse> listener) {
         FirebaseAuth firebaseAuth = helper.getFirebaseAuth();
-        helper.showLoadingDialog("");
         firebaseAuth.fetchProvidersForEmail(email)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Errore fetch provider"))
                 .addOnCompleteListener(new OnCompleteListener<ProviderQueryResult>() {
                     @Override
                     public void onComplete(@NonNull Task<ProviderQueryResult> task) {
+                        helper.dismissDialog();
                         if (task.isSuccessful()) {
                             String providerId = task.getResult().getProviders().get(0);
-                            helper.dismissDialog();
                             DialogCollisionError.Make(email, providerId)
                                     .setDialogClickListener(listener)
                                     .show(fm, "DialogCollision");
+
+                        } else {
+                            AuthResponse response = AuthResponse.Builder.create()
+                                    .setSuccessful(false)
+                                    .setException(task.getException())
+                                    .build();
+                            listener.onComplete(response);
                         }
                     }
                 });
@@ -108,7 +114,8 @@ public class CollisionAccountHandler {
                     .setPositiveButton("Accedi", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             if (listener != null) {
-                                AuthResponse response = AuthResponse.Builder.create(providerId)
+                                AuthResponse response = AuthResponse.Builder.create()
+                                        .setProviderId(providerId)
                                         .setSuccessful(true)
                                         .setEmail(mail)
                                         .build();

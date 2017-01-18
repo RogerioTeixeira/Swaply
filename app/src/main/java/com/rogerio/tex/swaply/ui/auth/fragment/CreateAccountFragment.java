@@ -1,8 +1,6 @@
 package com.rogerio.tex.swaply.ui.auth.fragment;
 
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -16,18 +14,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.provider.AuthResponse;
-import com.rogerio.tex.swaply.ui.BaseFragment;
 import com.rogerio.tex.swaply.ui.auth.CollisionAccountHandler;
 import com.rogerio.tex.swaply.ui.auth.CompleteListener;
-import com.rogerio.tex.swaply.ui.auth.EmailAuthActivity;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 
@@ -40,9 +40,9 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreateAccountFragment extends BaseFragment {
+public class CreateAccountFragment extends EmailAuthFragment {
 
-    private final static String TAG = CreateAccountFragment.class.getSimpleName();
+    private final static String TAG = "CreateAccountFragment";
 
     @BindView(R.id.input_email)
     TextInputEditText inputEmail;
@@ -63,23 +63,23 @@ public class CreateAccountFragment extends BaseFragment {
     @BindView(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
     private Form formValidation;
-    private CreateEmailListener listener;
+
 
     public CreateAccountFragment() {
         // Required empty public constructor
     }
 
-    private void CreateAccountMail(final String email, final String password) {
+    private void CreateAccountMail(final String email, final String password, final String name) {
         getActivityHelper().showLoadingDialog("");
         getActivityHelper().getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Errore creazione account email"))
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        getActivityHelper().dismissDialog();
                         if (e instanceof FirebaseAuthUserCollisionException) {
                             handlerCollisionException(email);
                         } else {
+                            getActivityHelper().dismissDialog();
                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
@@ -87,14 +87,29 @@ public class CreateAccountFragment extends BaseFragment {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        getActivityHelper().dismissDialog();
-                        if (listener != null) {
-                            AuthResponse response = AuthResponse.Builder.create(EmailAuthProvider.PROVIDER_ID)
-                                    .setEmail(email)
-                                    .setSuccessful(true)
-                                    .build();
-                            listener.onNewUser(response);
-                        }
+                        AuthResponse response = AuthResponse.Builder.create()
+                                .setProviderId(EmailAuthProvider.PROVIDER_ID)
+                                .setEmail(email)
+                                .setName(name)
+                                .setSuccessful(true)
+                                .build();
+                        final FirebaseUser user = authResult.getUser();
+                        updateUserProfile(user, response);
+
+                    }
+                });
+    }
+
+    private void updateUserProfile(final FirebaseUser user, final AuthResponse response) {
+        UserProfileChangeRequest changeNameRequest = new UserProfileChangeRequest.Builder()
+                .setDisplayName(response.getUser().getName())
+                .build();
+        user.updateProfile(changeNameRequest)
+                .addOnFailureListener(new TaskFailureLogger(TAG, "Error update profile"))
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        listener.succesLogin(response);
                     }
                 });
     }
@@ -104,23 +119,20 @@ public class CreateAccountFragment extends BaseFragment {
         collisionAccountHandler.show(email, getFragmentManager(), new CompleteListener<AuthResponse>() {
             @Override
             public void onComplete(AuthResponse response) {
-                if (listener != null) {
-                    if (response.getProviderId() == EmailAuthProvider.PROVIDER_ID) {
-                        listener.onExistingEmailUser(response);
-                    } else {
-                        listener.onExistingIdpUser(response);
+                if (response.isSuccessful()) {
+                    if (listener != null) {
+                        if (response.getProviderId().equalsIgnoreCase(EmailAuthProvider.PROVIDER_ID)) {
+                            listener.onExistingEmailUser(response);
+                        } else {
+                            listener.onExistingIdpUser(response);
+                        }
                     }
+                } else {
+                    Toast.makeText(getContext(), response.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Error handler Collision", response.getException());
                 }
             }
         });
-    }
-
-
-    private void finish(int resultCode, String providerId) {
-        String email = inputEmail.getText().toString();
-        String password = inputPassword.getText().toString();
-        Intent intent = EmailAuthActivity.createResultIntent(providerId, email, password);
-        getActivityHelper().finishActivity(resultCode, intent);
     }
 
     @Override
@@ -138,10 +150,10 @@ public class CreateAccountFragment extends BaseFragment {
                 .addonCompleteValidationListener(new Form.onCompleteValidationListener() {
                     @Override
                     public void onFormValidationSuccessful(List<FormValidationResult> validationResults) {
-
                         String email = inputEmail.getText().toString();
                         String password = inputPassword.getText().toString();
-                        CreateAccountMail(email, password);
+                        String name = inputName.getText().toString();
+                        CreateAccountMail(email, password, name);
                     }
 
                     @Override
@@ -168,33 +180,6 @@ public class CreateAccountFragment extends BaseFragment {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         ButterKnife.bind(this, rootView);
         return rootView;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof CreateEmailListener) {
-            listener = (CreateEmailListener) context;
-        }
-    }
-
-    interface CreateEmailListener {
-
-        /**
-         * Email entered belongs to an existing email user.
-         */
-        void onExistingEmailUser(AuthResponse response);
-
-        /**
-         * Email entered belongs to an existing IDP user.
-         */
-        void onExistingIdpUser(AuthResponse response);
-
-        /**
-         * Email entered does not beling to an existing user.
-         */
-        void onNewUser(AuthResponse response);
-
     }
 
 }

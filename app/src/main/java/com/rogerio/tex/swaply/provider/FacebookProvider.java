@@ -94,8 +94,9 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
                         String email = object.getString("email");
                         String name = object.getString("name");
                         String picture = object.getString("picture");
-                        AuthResponse authResponse = AuthResponse.Builder.create(getProviderId())
+                        AuthResponse authResponse = AuthResponse.Builder.create()
                                 .setToken(loginResult.getAccessToken().getToken())
+                                .setProviderId(getProviderId())
                                 .setSuccessful(true)
                                 .setEmail(email)
                                 .setName(name)
