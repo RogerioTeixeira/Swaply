@@ -141,7 +141,6 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
 
     }
 
-
     @OnClick({R.id.sign_in_button_facebook, R.id.sign_in_button_twitter, R.id.sign_in_button_google, R.id.button_skip, R.id.sign_in_button_email})
     public void onClick(View view) {
         switch (view.getId()) {
