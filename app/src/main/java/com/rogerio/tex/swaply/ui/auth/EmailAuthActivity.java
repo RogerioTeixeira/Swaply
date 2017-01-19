@@ -13,7 +13,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.provider.AuthProvider;
 import com.rogerio.tex.swaply.provider.AuthResponse;
+import com.rogerio.tex.swaply.provider.ProviderManager;
 import com.rogerio.tex.swaply.ui.BaseActivity;
 import com.rogerio.tex.swaply.ui.auth.fragment.CreateAccountFragment;
 import com.rogerio.tex.swaply.ui.auth.fragment.EmailAuthFragment;
@@ -24,7 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment.EmailAuthListener {
+public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment.EmailAuthListener, AuthProvider.AuthCallback {
 
     public static final String EXTRA_PARAM_ID = "EXTRA_PROVIDE_ID";
     public static final int RESULT_COLLISION = 30;
@@ -39,6 +41,8 @@ public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment
     AppBarLayout appbarlayout;
     @BindView(R.id.pager)
     ViewPager pager;
+
+    private ProviderManager providerManager;
 
     public static Intent createResultIntent(AuthResponse response) {
         Intent intent = new Intent();
@@ -56,6 +60,7 @@ public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment
         return response;
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +77,8 @@ public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment
                 setToobarTitle(tab.getPosition());
             }
         });
+
+        providerManager = ProviderManager.createInstance();
 
     }
 
@@ -106,12 +113,35 @@ public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment
 
     @Override
     public void onExistingIdpUser(AuthResponse response) {
-
+        String providerId = response.getProviderId();
+        providerManager.startLogin(providerId, this, this);
     }
 
     @Override
     public void succesLogin(AuthResponse response) {
         getActivityHelper().finishActivity(Activity.RESULT_OK, createResultIntent(response));
+    }
+
+    @Override
+    public void onSuccess(AuthResponse response) {
+        getActivityHelper().finishActivity(Activity.RESULT_OK, createResultIntent(response));
+    }
+
+    @Override
+    public void onFailure(Bundle extra) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        providerManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        providerManager.onStop();
     }
 
     public static class ViewPagerAdapter extends FragmentStatePagerAdapter {
