@@ -1,8 +1,9 @@
 package com.rogerio.tex.swaply.provider;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthCredential;
 
@@ -10,27 +11,13 @@ import com.google.firebase.auth.AuthCredential;
  * Created by Rogerio Lavoro on 02/12/2016.
  */
 
-public abstract class AuthProvider {
+public abstract class AuthProvider extends ContextWrapper {
 
-    protected AppCompatActivity appCompatActivity;
     protected AuthCallback authCallback;
 
-    public AuthProvider(AppCompatActivity activity) {
-        appCompatActivity = activity;
-    }
-
-    public AuthProvider(AppCompatActivity activity, AuthCallback authCallback) {
-        this(activity);
+    public AuthProvider(Context context, AuthCallback authCallback) {
+        super(context);
         this.authCallback = authCallback;
-    }
-
-    protected void onDestroy() {
-        if (appCompatActivity != null) {
-            appCompatActivity = null;
-        }
-        if (authCallback != null) {
-            authCallback = null;
-        }
     }
 
     public abstract void onStop();

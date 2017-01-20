@@ -1,6 +1,5 @@
 package com.rogerio.tex.swaply.provider;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,25 +29,19 @@ public class TwitterProvider extends AuthProvider {
 
     private static final String TAG = "TwitterProvider";
     private TwitterAuthClient client;
-
-
-    public TwitterProvider(AppCompatActivity activity) {
-        super(activity);
-        initialize();
-
-    }
+    private AppCompatActivity activity;
 
     public TwitterProvider(AppCompatActivity activity, AuthCallback authCallback) {
         super(activity, authCallback);
+        this.activity = activity;
         initialize();
     }
 
     private void initialize() {
-        AppCompatActivity activity = appCompatActivity;
-        String twitter_key = activity.getResources().getString(R.string.twitter_key);
-        String twitter_secret = activity.getResources().getString(R.string.twitter_secret);
+        String twitter_key = getResources().getString(R.string.twitter_key);
+        String twitter_secret = getResources().getString(R.string.twitter_secret);
         TwitterAuthConfig authConfig = new TwitterAuthConfig(twitter_key, twitter_secret);
-        Fabric.with(activity.getApplicationContext(), new Twitter(authConfig));
+        Fabric.with(this, new Twitter(authConfig));
 
     }
 
@@ -66,7 +59,6 @@ public class TwitterProvider extends AuthProvider {
 
     @Override
     public void startLogin() {
-        Activity activity = appCompatActivity;
         Twitter.getSessionManager().clearActiveSession();
         Twitter.logOut();
         Log.v(TAG, "twitter prima login");
@@ -126,7 +118,6 @@ public class TwitterProvider extends AuthProvider {
 
     @Override
     public void onStop() {
-        onDestroy();
         Log.v(TAG, "twitter ondestroy");
     }
 

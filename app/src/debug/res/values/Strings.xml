@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="facebook_app_id">364345243904696</string>
-    <string name="twitter_key">vN1aPHy2T0Y8O4S6L58D6bktc</string>
-    <string name="twitter_secret">91MPS4g3wmHcWz1WdjHiN4ifxMDHXvgNmCTYuTMBR07ixXICwU</string>
+<resources xmlns:xliff="http://schemas.android.com/tools">
+    <string name="facebook_app_id"> <xliff:g id="facebook_app_id">364345243904696</xliff:g></string>
+    <string name="twitter_key"><xliff:g id="twitter_key">vN1aPHy2T0Y8O4S6L58D6bktc</xliff:g></string>
+    <string name="twitter_secret"><xliff:g id="twitter_secret">91MPS4g3wmHcWz1WdjHiN4ifxMDHXvgNmCTYuTMBR07ixXICwU</xliff:g></string>
+    <string name="firebase_ref"><xliff:g id="firebase_ref">https://swaplydev-d05ea.firebaseio.com</xliff:g></string>
 </resources>

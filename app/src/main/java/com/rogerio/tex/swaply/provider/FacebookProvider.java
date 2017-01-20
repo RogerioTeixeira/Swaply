@@ -1,6 +1,5 @@
 package com.rogerio.tex.swaply.provider;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,21 +31,16 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
 
     private static final String TAG = "FacebookProvider";
     private CallbackManager callbackManager;
+    private AppCompatActivity activity;
 
-
-    public FacebookProvider(AppCompatActivity activity) {
-        super(activity);
-        initFacebook();
-
-    }
 
     public FacebookProvider(AppCompatActivity activity, AuthCallback authCallback) {
         super(activity, authCallback);
+        this.activity = activity;
         initFacebook();
     }
 
     private void initFacebook() {
-        AppCompatActivity activity = appCompatActivity;
         FacebookSdk.sdkInitialize(activity.getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
 
@@ -64,7 +58,6 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
 
     @Override
     public void startLogin() {
-        Activity activity = appCompatActivity;
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(callbackManager, this);
         List<String> permission = new ArrayList<String>();
@@ -138,7 +131,7 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
 
     @Override
     public void onStop() {
-        onDestroy();
+
     }
 
 }

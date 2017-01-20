@@ -4,34 +4,26 @@
     android:id="@+id/activity_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:background="#448aff"
     tools:context="com.rogerio.tex.swaply.ui.auth.LoginActivity">
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/background" />
+
 
     <RelativeLayout style="@style/WrapperStyle">
 
-        <TextView
-            android:id="@+id/label_login"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/image_icon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="90dp"
-            android:gravity="center"
-            android:text="Benvenuti in Swaply"
-            android:textColor="@android:color/white"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="30dp"
+            android:src="@drawable/sfondo_splash" />
 
         <Button
             android:id="@+id/sign_in_button_google"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_below="@+id/label_login"
+            android:layout_below="@+id/image_icon"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
             android:background="@drawable/button_google_gb"

@@ -16,13 +16,12 @@ import com.rogerio.tex.swaply.ui.auth.EmailAuthActivity;
 public class EmailProvider extends AuthProvider {
 
     private static final String TAG = "EmailProvider";
+    private AppCompatActivity activity;
 
-    public EmailProvider(AppCompatActivity activity) {
-        super(activity);
-    }
 
     public EmailProvider(AppCompatActivity activity, AuthCallback authCallback) {
         super(activity, authCallback);
+        this.activity = activity;
 
     }
 
@@ -50,7 +49,7 @@ public class EmailProvider extends AuthProvider {
 
     @Override
     public void startLogin() {
-        EmailAuthActivity.startActivity(appCompatActivity);
+        EmailAuthActivity.startActivity(activity);
     }
 
     @Override

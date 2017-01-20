@@ -1,6 +1,5 @@
 package com.rogerio.tex.swaply.provider;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,20 +28,15 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
     private static final int RC_SIGN_IN = 20;
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInOptions gso;
-
-    public GoogleProvider(AppCompatActivity activity) {
-        super(activity);
-        initGoogleService();
-
-    }
+    private AppCompatActivity activity;
 
     public GoogleProvider(AppCompatActivity activity, AuthCallback authCallback) {
         super(activity, authCallback);
+        this.activity = activity;
         initGoogleService();
     }
 
     private void initGoogleService() {
-        AppCompatActivity activity = appCompatActivity;
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .requestIdToken(activity.getString(R.string.default_web_client_id))
@@ -94,7 +88,6 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
 
     @Override
     public void startLogin() {
-        Activity activity = appCompatActivity;
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         activity.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -106,7 +99,6 @@ public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnCo
 
     @Override
     public void onStop() {
-        onDestroy();
         mGoogleApiClient.disconnect();
     }
 
