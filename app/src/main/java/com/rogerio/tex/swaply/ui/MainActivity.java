@@ -101,8 +101,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v("MainProva", "onActivity-request:" + requestCode);
-        Log.v("MainProva", "onActivity-result:" + resultCode);
         if (requestCode == LoginActivity.REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             AuthResponse response = LoginActivity.getResultData(data);
 

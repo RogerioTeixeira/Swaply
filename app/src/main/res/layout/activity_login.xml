@@ -4,7 +4,6 @@
     android:id="@+id/activity_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#448aff"
     tools:context="com.rogerio.tex.swaply.ui.auth.LoginActivity">
 
 
@@ -17,7 +16,8 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
-            android:src="@drawable/sfondo_splash" />
+            android:src="@drawable/sfondo_splash"
+            android:transitionName="icona" />
 
         <Button
             android:id="@+id/sign_in_button_google"

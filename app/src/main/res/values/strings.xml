@@ -1,9 +1,7 @@
 <resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">Swaply</string>
-    <string name="loading">Caricamento</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
@@ -22,7 +20,6 @@
 
     <string name="button_login">Accedi</string>
     <string name="button_create">Registrati</string>
-    <string name="button_avanti">Avanti</string>
 
     <string name="label_button_login_google">Accedi con Google</string>
     <string name="label_button_login_facebook">Accedi con Facebook</string>
@@ -30,9 +27,6 @@
     <string name="label_button_login_mail">Accedi con Mail</string>
     <string name="label_button_login_skip">Salta</string>
 
-    <string name="validate_error_missing_default">Campo obbligatorio</string>
-
-    <string name="validate_error_missing_email">Indirizzo email obbligatorio</string>
     <string name="validate_error_invalid_email">Indirizzo email non valido</string>
     <string name="validate_error_invalid_password">Password non valida</string>
 

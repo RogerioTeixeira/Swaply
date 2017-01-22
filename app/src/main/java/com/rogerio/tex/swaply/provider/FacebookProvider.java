@@ -58,6 +58,7 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
 
     @Override
     public void startLogin() {
+
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.registerCallback(callbackManager, this);
         List<String> permission = new ArrayList<String>();
