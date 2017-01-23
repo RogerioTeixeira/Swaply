@@ -26,6 +26,7 @@ import butterknife.BindView;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String EXTRA_PARAM_ID = "EXTRA_PARAM";
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.fragment_container)
@@ -34,9 +35,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     NavigationView navigationView;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
+
+    public static void startActivity(Activity activity, AuthResponse response) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        intent.putExtra(EXTRA_PARAM_ID, response);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected int getLayoutResource() {

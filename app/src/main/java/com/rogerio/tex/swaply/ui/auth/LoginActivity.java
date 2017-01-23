@@ -3,9 +3,9 @@ package com.rogerio.tex.swaply.ui.auth;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -19,11 +19,14 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.provider.AuthProvider;
 import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.provider.ProviderManager;
 import com.rogerio.tex.swaply.ui.BaseActivity;
+import com.rogerio.tex.swaply.ui.MainActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -31,7 +34,7 @@ import butterknife.OnClick;
 
 public class LoginActivity extends BaseActivity implements AuthProvider.AuthCallback {
     public static final int REQUEST_CODE = 102;
-    private static final String TAG_LOG = "LoginActivity";
+    private static final String TAG = "LoginActivity";
     private static final String EXTRA_PARAM_ID = "EXTRA_AUTH_PARAM";
 
     @BindView(R.id.sign_in_button_facebook)
@@ -95,7 +98,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
             finish(response);
         } else {
             AuthCredential authCredential = ProviderManager.createAuthCredential(response);
-            Log.v(TAG_LOG, "Onsucces");
+
             if (authCredential != null) {
                 getActivityHelper().showLoadingDialog("");
                 getActivityHelper().getFirebaseAuth().signInWithCredential(authCredential)
@@ -103,7 +106,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            finish(response);
+                            updateUserProfile(task.getResult().getUser(), response);
                         } else {
                             if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 handlerUserCollisionException(response.getUser().getEmail());
@@ -115,10 +118,32 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
         }
     }
 
+    private void updateUserProfile(final FirebaseUser user, final AuthResponse response) {
+        Uri uriPhoto = Uri.parse(response.getUser().getPhotoUrl());
+        UserProfileChangeRequest changeNameRequest = new UserProfileChangeRequest.Builder()
+                .setDisplayName(response.getUser().getName())
+                .setPhotoUri(uriPhoto)
+                .build();
+        user.updateProfile(changeNameRequest)
+                .addOnFailureListener(new TaskFailureLogger(TAG, "Error update profile"))
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish(response);
+                    }
+                });
+    }
+
+
+
     private void finish(AuthResponse response) {
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_PARAM_ID, response);
-        getActivityHelper().finishActivity(Activity.RESULT_OK, intent);
+        if (getCallingActivity() != null) {
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_PARAM_ID, response);
+            getActivityHelper().finishActivity(Activity.RESULT_OK, intent);
+        } else {
+            MainActivity.startActivity(this, response);
+        }
     }
 
     private void handlerUserCollisionException(String email) {

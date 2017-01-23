@@ -1,19 +1,19 @@
 package com.rogerio.tex.swaply.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ImageView;
 
-import com.rogerio.tex.swaply.R;
-
-public class SplashActivity extends AppCompatActivity implements View.OnClickListener {
+public class SplashActivity extends BaseActivity {
     private ImageView image;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
 
+    }
+
+    @Override
+    protected int getLayoutResource() {
+        return 0;
     }
 
     @Override
@@ -23,14 +23,8 @@ public class SplashActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-
     public void onStop() {
         super.onStop();
     }
 
-    @Override
-    public void onClick(View v) {
-
-
-    }
 }

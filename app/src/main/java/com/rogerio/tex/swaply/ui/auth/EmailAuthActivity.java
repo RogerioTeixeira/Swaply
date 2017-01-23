@@ -28,7 +28,7 @@ import butterknife.BindView;
 
 public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment.EmailAuthListener, AuthProvider.AuthCallback {
 
-    public static final String EXTRA_PARAM_ID = "EXTRA_PROVIDE_ID";
+    public static final String EXTRA_PARAM_ID = "EXTRA_PARAM";
     public static final int RESULT_COLLISION = 30;
     public static final int REQUEST_CODE = 100;
     private static final int INDEX_TAB_LOGIN = 0;
