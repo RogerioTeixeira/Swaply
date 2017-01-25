@@ -101,14 +101,21 @@ public class CreateAccountFragment extends EmailAuthFragment {
     }
 
     private void updateUserProfile(final FirebaseUser user, final AuthResponse response) {
+        String name = response.getUser().getName();
+        Log.v("Updateprof", "Update name:" + name);
         UserProfileChangeRequest changeNameRequest = new UserProfileChangeRequest.Builder()
-                .setDisplayName(response.getUser().getName())
+                .setDisplayName(name)
                 .build();
         user.updateProfile(changeNameRequest)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Error update profile"))
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.v("Updateprof", "Update ok");
+                        } else {
+                            Log.e("Updateprof", "Update ko", task.getException());
+                        }
                         listener.succesLogin(response);
                     }
                 });

@@ -3,7 +3,6 @@ package com.rogerio.tex.swaply.ui.auth;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -19,9 +18,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.provider.AuthProvider;
 import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.provider.ProviderManager;
@@ -50,9 +47,14 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     private FirebaseUser user;
     private ProviderManager providerManager;
 
-    public static void startActivity(Activity activity) {
+    public static void startActivityForResult(Activity activity) {
         Intent intent = new Intent(activity, LoginActivity.class);
         activity.startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    public static void startActivity(Activity activity) {
+        Intent intent = new Intent(activity, LoginActivity.class);
+        activity.startActivity(intent);
     }
 
     public static AuthResponse getResultData(Intent intent) {
@@ -106,7 +108,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            updateUserProfile(task.getResult().getUser(), response);
+                            finish(response);
                         } else {
                             if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                                 handlerUserCollisionException(response.getUser().getEmail());
@@ -117,24 +119,6 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
             }
         }
     }
-
-    private void updateUserProfile(final FirebaseUser user, final AuthResponse response) {
-        Uri uriPhoto = Uri.parse(response.getUser().getPhotoUrl());
-        UserProfileChangeRequest changeNameRequest = new UserProfileChangeRequest.Builder()
-                .setDisplayName(response.getUser().getName())
-                .setPhotoUri(uriPhoto)
-                .build();
-        user.updateProfile(changeNameRequest)
-                .addOnFailureListener(new TaskFailureLogger(TAG, "Error update profile"))
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        finish(response);
-                    }
-                });
-    }
-
-
 
     private void finish(AuthResponse response) {
         if (getCallingActivity() != null) {

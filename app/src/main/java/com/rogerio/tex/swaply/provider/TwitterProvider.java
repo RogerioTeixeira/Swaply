@@ -86,10 +86,12 @@ public class TwitterProvider extends AuthProvider {
             public void success(Result<User> userResult) {
 
                 String name = userResult.data.name;
-                String profileurl = userResult.data.profileImageUrl;
+                String photoUrlNormalSize = userResult.data.profileImageUrl;
                 String mail = userResult.data.email;
+                String photoUrlBiggerSize = userResult.data.profileImageUrl.replace("_normal", "_bigger");
+                String photoUrlMiniSize = userResult.data.profileImageUrl.replace("_normal", "_mini");
                 Log.v(TAG, "getUserData-name:" + name);
-                Log.v(TAG, "getUserData-photo:" + profileurl);
+                Log.v(TAG, "getUserData-photo:" + photoUrlNormalSize);
 
                 AuthResponse response = AuthResponse.Builder.create()
                         .setToken(session.getAuthToken().token)
@@ -97,7 +99,7 @@ public class TwitterProvider extends AuthProvider {
                         .setSecretKey(session.getAuthToken().secret)
                         .setSuccessful(true)
                         .setName(name)
-                        .setPhotoUrl(profileurl)
+                        .setPhotoUrl(photoUrlNormalSize)
                         .build();
                 authCallback.onSuccess(response);
             }
