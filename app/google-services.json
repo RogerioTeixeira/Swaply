@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "209508169760",
+    "firebase_url": "https://swaply-ef8ff.firebaseio.com",
+    "project_id": "swaply-ef8ff",
+    "storage_bucket": "swaply-ef8ff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209508169760:android:0cf969cf9aab5b1e",
+        "android_client_info": {
+          "package_name": "com.rogerio.tex.swaply"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "209508169760-363gsusvnqom3028efeo93vpevq2rqpg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rogerio.tex.swaply",
+            "certificate_hash": "BC8DC0037EFA991F76C2C8C4F9449584CB19F62C"
+          }
+        },
+        {
+          "client_id": "209508169760-mlvhvtmguq04ve7oil1cq2q3s3je54rf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASiJ6JIzHWETFlqgJ8Vd7n8OSkgVwlz_k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "209508169760-mlvhvtmguq04ve7oil1cq2q3s3je54rf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
