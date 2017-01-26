@@ -15,16 +15,16 @@ import java.util.HashMap;
  * Created by rogerio on 18/01/2017.
  */
 
-public class ProviderManager {
+public class LoginProviderManager {
 
     private final HashMap<String, AuthProvider> authProviderHashMap = new HashMap<>();
 
-    private ProviderManager() {
+    private LoginProviderManager() {
 
     }
 
-    public static ProviderManager createInstance() {
-        return new ProviderManager();
+    public static LoginProviderManager createInstance() {
+        return new LoginProviderManager();
     }
 
     public static AuthCredential createAuthCredential(AuthResponse response) {

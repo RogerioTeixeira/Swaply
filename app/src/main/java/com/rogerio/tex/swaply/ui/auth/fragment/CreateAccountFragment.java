@@ -112,9 +112,9 @@ public class CreateAccountFragment extends EmailAuthFragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.v("Updateprof", "Update ok");
+                            Log.v(TAG, "Update profile ok");
                         } else {
-                            Log.e("Updateprof", "Update ko", task.getException());
+                            Log.e(TAG, "Update profile ko", task.getException());
                         }
                         listener.succesLogin(response);
                     }

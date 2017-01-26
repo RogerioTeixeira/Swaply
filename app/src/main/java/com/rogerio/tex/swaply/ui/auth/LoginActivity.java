@@ -14,6 +14,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -21,9 +22,10 @@ import com.google.firebase.auth.TwitterAuthProvider;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.provider.AuthProvider;
 import com.rogerio.tex.swaply.provider.AuthResponse;
-import com.rogerio.tex.swaply.provider.ProviderManager;
+import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.ui.BaseActivity;
 import com.rogerio.tex.swaply.ui.MainActivity;
+import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -45,7 +47,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     @BindView(R.id.sign_in_button_email)
     Button signInButtonEmail;
     private FirebaseUser user;
-    private ProviderManager providerManager;
+    private LoginProviderManager providerManager;
 
     public static void startActivityForResult(Activity activity) {
         Intent intent = new Intent(activity, LoginActivity.class);
@@ -64,7 +66,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        providerManager = ProviderManager.createInstance();
+        providerManager = LoginProviderManager.createInstance();
     }
 
     @Override
@@ -96,37 +98,31 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
 
     @Override
     public void onSuccess(final AuthResponse response) {
-        if (response.getProviderId().equalsIgnoreCase(EmailAuthProvider.PROVIDER_ID)) {
-            finish(response);
-        } else {
-            AuthCredential authCredential = ProviderManager.createAuthCredential(response);
-
-            if (authCredential != null) {
-                getActivityHelper().showLoadingDialog("");
-                getActivityHelper().getFirebaseAuth().signInWithCredential(authCredential)
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            finish(response);
-                        } else {
-                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                handlerUserCollisionException(response.getUser().getEmail());
+        AuthCredential authCredential = LoginProviderManager.createAuthCredential(response);
+        if (authCredential != null) {
+            getActivityHelper().showLoadingDialog("");
+            FirebaseAuth.getInstance().signInWithCredential(authCredential)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                finish();
+                            } else {
+                                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                    handlerUserCollisionException(response.getUser().getEmail());
+                                }
                             }
                         }
-                    }
-                });
-            }
+                    });
         }
     }
 
-    private void finish(AuthResponse response) {
+    private void checkAlreadyAuthenticated() {
         if (getCallingActivity() != null) {
             Intent intent = new Intent();
-            intent.putExtra(EXTRA_PARAM_ID, response);
             getActivityHelper().finishActivity(Activity.RESULT_OK, intent);
         } else {
-            MainActivity.startActivity(this, response);
+            MainActivity.startActivity(this);
         }
     }
 
@@ -174,6 +170,20 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     @Override
     public void onBackPressed() {
         finishAffinity();
+    }
+
+
+    public static class FirebaseSignInHandler implements OnCompleteListener<AuthResult> {
+        private ActivityHelper helper;
+
+        public FirebaseSignInHandler(ActivityHelper helper) {
+            this.helper = helper;
+        }
+
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+
+        }
     }
 
 }

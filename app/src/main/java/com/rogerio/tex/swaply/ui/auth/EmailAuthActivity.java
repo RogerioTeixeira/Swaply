@@ -15,7 +15,7 @@ import android.util.Log;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.provider.AuthProvider;
 import com.rogerio.tex.swaply.provider.AuthResponse;
-import com.rogerio.tex.swaply.provider.ProviderManager;
+import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.ui.BaseActivity;
 import com.rogerio.tex.swaply.ui.auth.fragment.CreateAccountFragment;
 import com.rogerio.tex.swaply.ui.auth.fragment.EmailAuthFragment;
@@ -42,7 +42,7 @@ public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment
     @BindView(R.id.pager)
     ViewPager pager;
 
-    private ProviderManager providerManager;
+    private LoginProviderManager providerManager;
 
     public static Intent createResultIntent(AuthResponse response) {
         Intent intent = new Intent();
@@ -78,7 +78,7 @@ public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment
             }
         });
 
-        providerManager = ProviderManager.createInstance();
+        providerManager = LoginProviderManager.createInstance();
 
     }
 
