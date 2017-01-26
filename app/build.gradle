@@ -33,7 +33,6 @@ android {
         debug {
             applicationIdSuffix ".debug"
             versionNameSuffix '-debug'
-            buildConfigField "String", "URL_DATABASE", FIREBASE_REF_DEV
         }
         release {
             minifyEnabled false
