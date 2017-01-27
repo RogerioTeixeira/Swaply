@@ -13,7 +13,7 @@ import com.rogerio.tex.swaply.ui.auth.EmailAuthActivity;
  * Created by rogerio on 07/01/2017.
  */
 
-public class EmailProvider extends AuthProvider {
+public class EmailProvider extends AbstractProvider {
 
     private static final String TAG = "EmailProvider";
     private AppCompatActivity activity;

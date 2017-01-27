@@ -16,6 +16,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
+import com.rogerio.tex.swaply.OnCompleteListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,15 +28,15 @@ import java.util.List;
  * Created by Rogerio Lavoro on 02/12/2016.
  */
 
-public class FacebookProvider extends AuthProvider implements FacebookCallback<LoginResult> {
+public class FacebookProvider extends AbstractProvider implements FacebookCallback<LoginResult> {
 
     private static final String TAG = "FacebookProvider";
     private CallbackManager callbackManager;
     private AppCompatActivity activity;
 
 
-    public FacebookProvider(AppCompatActivity activity, AuthCallback authCallback) {
-        super(activity, authCallback);
+    public FacebookProvider(AppCompatActivity activity, OnCompleteListener<ProviderResult> listener) {
+        super(activity, listener);
         this.activity = activity;
         initFacebook();
     }
@@ -64,19 +65,16 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
         List<String> permission = new ArrayList<String>();
         permission.add("email");
         permission.add("public_profile");
-        Log.w(TAG, "callfacebook");
         loginManager.logInWithReadPermissions(activity, permission);
     }
 
 
     @Override
     public void onSuccess(final LoginResult loginResult) {
-        Log.w(TAG, "callfacebook1");
         AccessToken accessToken = loginResult.getAccessToken();
         GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
-                Log.w(TAG, "callfacebook-complete");
                 if (response.getError() != null) {
                     authCallback.onFailure(new Bundle());
                     return;
@@ -116,13 +114,13 @@ public class FacebookProvider extends AuthProvider implements FacebookCallback<L
     @Override
     public void onCancel() {
         Log.v(TAG, "Facebook login cancel");
-        authCallback.onFailure(new Bundle());
+        finish();
     }
 
     @Override
     public void onError(FacebookException error) {
         Log.e(TAG, "Error facebook login", error);
-        authCallback.onFailure(new Bundle());
+        finish();
     }
 
     @Override

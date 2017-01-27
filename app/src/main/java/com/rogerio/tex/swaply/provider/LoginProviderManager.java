@@ -1,13 +1,20 @@
 package com.rogerio.tex.swaply.provider;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.rogerio.tex.swaply.TaskFailureLogger;
 
 import java.util.HashMap;
 
@@ -17,8 +24,8 @@ import java.util.HashMap;
 
 public class LoginProviderManager {
 
-    private final HashMap<String, AuthProvider> authProviderHashMap = new HashMap<>();
-
+    private static String ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL = "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL";
+    private final HashMap<String, AbstractProvider> authProviderHashMap = new HashMap<>();
     private LoginProviderManager() {
 
     }
@@ -41,12 +48,12 @@ public class LoginProviderManager {
         }
     }
 
-    public void startLogin(String providerId, AppCompatActivity activity, AuthProvider.AuthCallback authCallback) {
+    public void startLogin(String providerId, AppCompatActivity activity, AbstractProvider.AuthCallback authCallback) {
 
         if (authProviderHashMap.containsKey(providerId)) {
             authProviderHashMap.get(providerId).startLogin();
         } else {
-            AuthProvider provider = null;
+            AbstractProvider provider = null;
             switch (providerId) {
                 case EmailAuthProvider.PROVIDER_ID:
                     provider = new EmailProvider(activity, authCallback);
@@ -60,25 +67,54 @@ public class LoginProviderManager {
                 case TwitterAuthProvider.PROVIDER_ID:
                     provider = new TwitterProvider(activity, authCallback);
                     break;
+                default:
+                    throw new IllegalArgumentException("Provider id not valid");
             }
-            if (provider != null) {
-                authProviderHashMap.put(provider.getProviderId(), provider);
-                provider.startLogin();
-            }
+            authProviderHashMap.put(provider.getProviderId(), provider);
+            provider.startLogin();
+
         }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        for (final AuthProvider authProvider : authProviderHashMap.values()) {
+        for (final AbstractProvider authProvider : authProviderHashMap.values()) {
             authProvider.onActivityResult(requestCode, resultCode, data);
         }
 
     }
 
     public void onStop() {
-        for (final AuthProvider authProvider : authProviderHashMap.values()) {
+        for (final AbstractProvider authProvider : authProviderHashMap.values()) {
             authProvider.onStop();
         }
+    }
+
+    private void signInFirebaseWithCredential(AuthCredential authCredential) {
+        FirebaseAuth.getInstance().signInWithCredential(authCredential)
+                .addOnFailureListener(new TaskFailureLogger("AbstractProvider", "Error signInWithCredential"))
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        singInHandlerException(e);
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+
+                    }
+                });
+
+    }
+
+    private void singInHandlerException(Exception exception) {
+        if (exception instanceof FirebaseAuthUserCollisionException) {
+            FirebaseAuthUserCollisionException ex = (FirebaseAuthUserCollisionException) exception;
+            if (ex.getErrorCode().equalsIgnoreCase(ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL)) {
+                return;
+            }
+        }
+
     }
 
 }

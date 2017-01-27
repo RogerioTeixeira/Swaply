@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -23,11 +22,11 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.ui.auth.CollisionAccountHandler;
-import com.rogerio.tex.swaply.ui.auth.CompleteListener;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 
@@ -108,7 +107,7 @@ public class CreateAccountFragment extends EmailAuthFragment {
                 .build();
         user.updateProfile(changeNameRequest)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Error update profile"))
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
@@ -123,7 +122,7 @@ public class CreateAccountFragment extends EmailAuthFragment {
 
     private void handlerCollisionException(String email) {
         CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(getActivityHelper());
-        collisionAccountHandler.show(email, getFragmentManager(), new CompleteListener<AuthResponse>() {
+        collisionAccountHandler.show(email, getFragmentManager(), new OnCompleteListener<AuthResponse>() {
             @Override
             public void onComplete(AuthResponse response) {
                 if (response.isSuccessful()) {

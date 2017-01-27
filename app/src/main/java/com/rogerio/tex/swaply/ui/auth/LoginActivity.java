@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -19,8 +18,9 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.provider.AuthProvider;
+import com.rogerio.tex.swaply.provider.AbstractProvider;
 import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.ui.BaseActivity;
@@ -31,7 +31,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 
-public class LoginActivity extends BaseActivity implements AuthProvider.AuthCallback {
+public class LoginActivity extends BaseActivity implements AbstractProvider.AuthCallback {
     public static final int REQUEST_CODE = 102;
     private static final String TAG = "LoginActivity";
     private static final String EXTRA_PARAM_ID = "EXTRA_AUTH_PARAM";
@@ -102,10 +102,11 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
         if (authCredential != null) {
             getActivityHelper().showLoadingDialog("");
             FirebaseAuth.getInstance().signInWithCredential(authCredential)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    .addOnCompleteListener(this, new com.google.android.gms.tasks.OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                task.
                                 finish();
                             } else {
                                 if (task.getException() instanceof FirebaseAuthUserCollisionException) {
@@ -115,6 +116,12 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
                         }
                     });
         }
+    }
+
+    @Override
+    public void onFailure(Bundle extra) {
+        getActivityHelper().dismissDialog();
+
     }
 
     private void checkAlreadyAuthenticated() {
@@ -127,7 +134,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     }
 
     private void handlerUserCollisionException(String email) {
-        CompleteListener<AuthResponse> listener = new CompleteListener<AuthResponse>() {
+        OnCompleteListener<AuthResponse> listener = new OnCompleteListener<AuthResponse>() {
             @Override
             public void onComplete(AuthResponse response) {
                 String providerId = response.getProviderId();
@@ -140,11 +147,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
 
     }
 
-    @Override
-    public void onFailure(Bundle extra) {
-        getActivityHelper().dismissDialog();
 
-    }
 
     @OnClick({R.id.sign_in_button_facebook, R.id.sign_in_button_twitter, R.id.sign_in_button_google, R.id.button_skip, R.id.sign_in_button_email})
     public void onClick(View view) {
@@ -173,7 +176,7 @@ public class LoginActivity extends BaseActivity implements AuthProvider.AuthCall
     }
 
 
-    public static class FirebaseSignInHandler implements OnCompleteListener<AuthResult> {
+    public static class FirebaseSignInHandler implements com.google.android.gms.tasks.OnCompleteListener {
         private ActivityHelper helper;
 
         public FirebaseSignInHandler(ActivityHelper helper) {

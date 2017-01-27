@@ -5,10 +5,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -16,10 +17,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.provider.AuthResponse;
-import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
 
 /**
  * Created by rogerio on 07/01/2017.
@@ -28,22 +29,26 @@ import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
 public class CollisionAccountHandler {
     private final static String TAG = "CollisionAccountHandler";
 
-    final ActivityHelper helper;
+    public CollisionAccountHandler() {
 
-    public CollisionAccountHandler(ActivityHelper helper) {
-        this.helper = helper;
 
     }
 
+    public void show(final String email, final AppCompatActivity activity, @NonNull final OnCompleteListener<AuthResponse> listener) {
+        show(email, activity.getSupportFragmentManager(), listener);
+    }
 
-    public void show(final String email, final FragmentManager fm, @NonNull final CompleteListener<AuthResponse> listener) {
-        FirebaseAuth firebaseAuth = helper.getFirebaseAuth();
+    public void show(final String email, final Fragment fragment, @NonNull final OnCompleteListener<AuthResponse> listener) {
+        show(email, fragment.getFragmentManager(), listener);
+    }
+
+    public void show(final String email, final FragmentManager fm, @NonNull final OnCompleteListener<AuthResponse> listener) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.fetchProvidersForEmail(email)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Errore fetch provider"))
-                .addOnCompleteListener(new OnCompleteListener<ProviderQueryResult>() {
+                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task<ProviderQueryResult> task) {
-                        helper.dismissDialog();
                         if (task.isSuccessful()) {
                             String providerId = task.getResult().getProviders().get(0);
                             DialogCollisionError.Make(email, providerId)
@@ -66,7 +71,7 @@ public class CollisionAccountHandler {
         private final static String TAG = "DialogCollisionError";
         private static final String EMAIL_PARAM = "email";
         private static final String PROVIDER_PARAM = "provider_id";
-        private CompleteListener<AuthResponse> listener;
+        private OnCompleteListener<AuthResponse> listener;
 
         public static DialogCollisionError Make(String email, String providerId) {
             DialogCollisionError fragment = new DialogCollisionError();
@@ -77,7 +82,7 @@ public class CollisionAccountHandler {
             return fragment;
         }
 
-        public DialogCollisionError setDialogClickListener(CompleteListener<AuthResponse> listener) {
+        public DialogCollisionError setDialogClickListener(OnCompleteListener<AuthResponse> listener) {
             this.listener = listener;
             return this;
         }

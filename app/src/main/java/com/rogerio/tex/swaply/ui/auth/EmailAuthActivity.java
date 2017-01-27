@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.provider.AuthProvider;
+import com.rogerio.tex.swaply.provider.AbstractProvider;
 import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.ui.BaseActivity;
@@ -26,7 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment.EmailAuthListener, AuthProvider.AuthCallback {
+public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment.EmailAuthListener, AbstractProvider.AuthCallback {
 
     public static final String EXTRA_PARAM_ID = "EXTRA_PARAM";
     public static final int RESULT_COLLISION = 30;

@@ -22,7 +22,7 @@ import com.rogerio.tex.swaply.R;
  * Created by Rogerio Lavoro on 02/12/2016.
  */
 
-public class GoogleProvider extends AuthProvider implements GoogleApiClient.OnConnectionFailedListener {
+public class GoogleProvider extends AbstractProvider implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "GoogleProvider";
     private static final int RC_SIGN_IN = 20;

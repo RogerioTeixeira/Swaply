@@ -25,11 +25,11 @@ public class AuthResponse implements Parcelable {
     private final String token;
     private final String providerId;
     private final String secretKey;
-    private final UserAuth user;
+    private final ProviderResult user;
     private final Exception exception;
     private final boolean isSuccessful;
 
-    public AuthResponse(String token, String providerId, String secretKey, UserAuth user, Exception exception, boolean isSuccessful) {
+    public AuthResponse(String token, String providerId, String secretKey, ProviderResult user, Exception exception, boolean isSuccessful) {
         this.token = token;
         this.providerId = providerId;
         this.secretKey = secretKey;
@@ -44,7 +44,7 @@ public class AuthResponse implements Parcelable {
         this.secretKey = in.readString();
         this.isSuccessful = in.readByte() != 0;
         if (in.readByte() == PRESENT) {
-            this.user = in.readParcelable(UserAuth.class.getClassLoader());
+            this.user = in.readParcelable(ProviderResult.class.getClassLoader());
         } else {
             this.user = null;
         }
@@ -68,7 +68,7 @@ public class AuthResponse implements Parcelable {
         return secretKey;
     }
 
-    public UserAuth getUser() {
+    public ProviderResult getUser() {
         return user;
     }
 
@@ -111,7 +111,7 @@ public class AuthResponse implements Parcelable {
         private String token;
         private String providerId;
         private String secretKey;
-        private UserAuth user;
+        private ProviderResult user;
         private Exception exception;
         private boolean isSuccessful;
         private String name;
@@ -156,7 +156,7 @@ public class AuthResponse implements Parcelable {
             return this;
         }
 
-        public Builder setUser(UserAuth user) {
+        public Builder setUser(ProviderResult user) {
             this.user = user;
             return this;
         }
@@ -174,7 +174,7 @@ public class AuthResponse implements Parcelable {
         public AuthResponse build() {
             if (this.user == null) {
                 if (this.email != null || this.name != null || this.photoUrl != null) {
-                    this.user = new UserAuth(this.name, this.email, this.photoUrl);
+                    this.user = new ProviderResult(this.name, this.email, this.photoUrl);
                 }
             }
             return new AuthResponse(this.token, this.providerId, this.secretKey, this.user, this.exception, this.isSuccessful);

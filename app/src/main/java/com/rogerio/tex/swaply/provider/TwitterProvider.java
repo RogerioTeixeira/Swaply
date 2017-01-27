@@ -25,7 +25,7 @@ import io.fabric.sdk.android.Fabric;
  * Created by Rogerio Lavoro on 02/12/2016.
  */
 
-public class TwitterProvider extends AuthProvider {
+public class TwitterProvider extends AbstractProvider {
 
     private static final String TAG = "TwitterProvider";
     private TwitterAuthClient client;
