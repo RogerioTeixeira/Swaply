@@ -14,7 +14,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.TaskFailureLogger;
+import com.rogerio.tex.swaply.TaskResult;
 
 import java.util.HashMap;
 
@@ -48,7 +50,7 @@ public class LoginProviderManager {
         }
     }
 
-    public void startLogin(String providerId, AppCompatActivity activity, AbstractProvider.AuthCallback authCallback) {
+    public void startLogin(String providerId, AppCompatActivity activity, OnCompleteListener<TaskResult<UserResult>> listener) {
 
         if (authProviderHashMap.containsKey(providerId)) {
             authProviderHashMap.get(providerId).startLogin();
@@ -56,16 +58,16 @@ public class LoginProviderManager {
             AbstractProvider provider = null;
             switch (providerId) {
                 case EmailAuthProvider.PROVIDER_ID:
-                    provider = new EmailProvider(activity, authCallback);
+                    provider = new EmailProvider(activity, listener);
                     break;
                 case FacebookAuthProvider.PROVIDER_ID:
-                    provider = new FacebookProvider(activity, authCallback);
+                    provider = new FacebookProvider(activity, listener);
                     break;
                 case GoogleAuthProvider.PROVIDER_ID:
-                    provider = new GoogleProvider(activity, authCallback);
+                    provider = new GoogleProvider(activity, listener);
                     break;
                 case TwitterAuthProvider.PROVIDER_ID:
-                    provider = new TwitterProvider(activity, authCallback);
+                    provider = new TwitterProvider(activity, listener);
                     break;
                 default:
                     throw new IllegalArgumentException("Provider id not valid");

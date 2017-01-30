@@ -12,13 +12,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.provider.AbstractProvider;
+import com.rogerio.tex.swaply.TaskResult;
 import com.rogerio.tex.swaply.provider.AuthResponse;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
+import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.BaseActivity;
+import com.rogerio.tex.swaply.ui.auth.fragment.BaseEmaiFragment;
 import com.rogerio.tex.swaply.ui.auth.fragment.CreateAccountFragment;
-import com.rogerio.tex.swaply.ui.auth.fragment.EmailAuthFragment;
 import com.rogerio.tex.swaply.ui.auth.fragment.EmailLoginFragment;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment.EmailAuthListener, AbstractProvider.AuthCallback {
+public class EmailAuthActivity extends BaseActivity implements BaseEmaiFragment.EmailAuthListener, OnCompleteListener<TaskResult<UserResult>> {
 
     public static final String EXTRA_PARAM_ID = "EXTRA_PARAM";
     public static final int RESULT_COLLISION = 30;
@@ -101,35 +103,30 @@ public class EmailAuthActivity extends BaseActivity implements EmailAuthFragment
 
 
     @Override
-    public void onExistingEmailUser(AuthResponse response) {
+    public void onExistingEmailUser(UserResult result) {
         Log.v("onExistingEmailUser", "onExistingEmailUser");
         pager.setCurrentItem(0);
         ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
         if (adapter.getItem(0) instanceof EmailLoginFragment) {
             EmailLoginFragment fragment = (EmailLoginFragment) adapter.getItem(0);
-            fragment.setEmail(response.getUser().getEmail());
+            fragment.setEmail(result.getEmail());
         }
     }
 
     @Override
-    public void onExistingIdpUser(AuthResponse response) {
-        String providerId = response.getProviderId();
+    public void onExistingIdpUser(UserResult result) {
+        String providerId = result.getProvideData();
         providerManager.startLogin(providerId, this, this);
     }
 
     @Override
-    public void succesLogin(AuthResponse response) {
+    public void succesLogin(UserResult result) {
         getActivityHelper().finishActivity(Activity.RESULT_OK, createResultIntent(response));
     }
 
     @Override
-    public void onSuccess(AuthResponse response) {
+    public void onComplete(TaskResult<UserResult> args) {
         getActivityHelper().finishActivity(Activity.RESULT_OK, createResultIntent(response));
-    }
-
-    @Override
-    public void onFailure(Bundle extra) {
-
     }
 
     @Override

@@ -2,14 +2,14 @@ package com.rogerio.tex.swaply.ui.auth.fragment;
 
 import android.content.Context;
 
-import com.rogerio.tex.swaply.provider.AuthResponse;
+import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.BaseFragment;
 
 /**
  * Created by Rogerio Lavoro on 18/01/2017.
  */
 
-public abstract class EmailAuthFragment extends BaseFragment {
+public abstract class BaseEmaiFragment extends BaseFragment {
 
     protected EmailAuthListener listener;
 
@@ -27,17 +27,17 @@ public abstract class EmailAuthFragment extends BaseFragment {
         /**
          * Email entered belongs to an existing email user.
          */
-        void onExistingEmailUser(AuthResponse response);
+        void onExistingEmailUser(UserResult result);
 
         /**
          * Email entered belongs to an existing IDP user.
          */
-        void onExistingIdpUser(AuthResponse response);
+        void onExistingIdpUser(UserResult result);
 
         /**
          * Email entered does not beling to an existing user.
          */
-        void succesLogin(AuthResponse response);
+        void succesLogin(UserResult result);
 
     }
 }

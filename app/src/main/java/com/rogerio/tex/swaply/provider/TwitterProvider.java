@@ -1,13 +1,14 @@
 package com.rogerio.tex.swaply.provider;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.TaskResult;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -31,8 +32,8 @@ public class TwitterProvider extends AbstractProvider {
     private TwitterAuthClient client;
     private AppCompatActivity activity;
 
-    public TwitterProvider(AppCompatActivity activity, AuthCallback authCallback) {
-        super(activity, authCallback);
+    public TwitterProvider(AppCompatActivity activity, OnCompleteListener<TaskResult<UserResult>> listener) {
+        super(activity, listener);
         this.activity = activity;
         initialize();
     }
@@ -74,7 +75,7 @@ public class TwitterProvider extends AbstractProvider {
             @Override
             public void failure(TwitterException e) {
                 Log.e(TAG, "Error twitter login", e);
-                authCallback.onFailure(new Bundle());
+                finish(e);
             }
         });
     }
@@ -93,20 +94,19 @@ public class TwitterProvider extends AbstractProvider {
                 Log.v(TAG, "getUserData-name:" + name);
                 Log.v(TAG, "getUserData-photo:" + photoUrlNormalSize);
 
-                AuthResponse response = AuthResponse.Builder.create()
-                        .setToken(session.getAuthToken().token)
-                        .setProviderId(getProviderId())
-                        .setSecretKey(session.getAuthToken().secret)
-                        .setSuccessful(true)
+                UserResult result = UserResult.Builder.create()
+                        .setProvideData(getProviderId())
                         .setName(name)
                         .setPhotoUrl(photoUrlNormalSize)
+                        .setProvideData(getProviderId())
                         .build();
-                authCallback.onSuccess(response);
+                finish(result);
             }
 
             @Override
             public void failure(TwitterException e) {
                 Log.e(TAG, "getUserData", e);
+                finish(e);
             }
         });
 

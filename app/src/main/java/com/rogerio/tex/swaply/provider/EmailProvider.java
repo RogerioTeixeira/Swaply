@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
+import com.rogerio.tex.swaply.OnCompleteListener;
+import com.rogerio.tex.swaply.TaskResult;
 import com.rogerio.tex.swaply.ui.auth.EmailAuthActivity;
 
 /**
@@ -19,8 +21,8 @@ public class EmailProvider extends AbstractProvider {
     private AppCompatActivity activity;
 
 
-    public EmailProvider(AppCompatActivity activity, AuthCallback authCallback) {
-        super(activity, authCallback);
+    public EmailProvider(AppCompatActivity activity, OnCompleteListener<TaskResult<UserResult>> listener) {
+        super(activity, listener);
         this.activity = activity;
 
     }

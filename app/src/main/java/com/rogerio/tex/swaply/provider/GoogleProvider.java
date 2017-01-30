@@ -1,7 +1,6 @@
 package com.rogerio.tex.swaply.provider;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,7 +15,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.TaskResult;
 
 /**
  * Created by Rogerio Lavoro on 02/12/2016.
@@ -30,8 +31,8 @@ public class GoogleProvider extends AbstractProvider implements GoogleApiClient.
     private GoogleSignInOptions gso;
     private AppCompatActivity activity;
 
-    public GoogleProvider(AppCompatActivity activity, AuthCallback authCallback) {
-        super(activity, authCallback);
+    public GoogleProvider(AppCompatActivity activity, OnCompleteListener<TaskResult<UserResult>> listener) {
+        super(activity, listener);
         this.activity = activity;
         initGoogleService();
     }
@@ -66,24 +67,21 @@ public class GoogleProvider extends AbstractProvider implements GoogleApiClient.
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
-                authCallback.onSuccess(createProviderResponse(account));
+                finish(createUserResult(account));
             } else {
-                authCallback.onFailure(new Bundle());
+                finish(new Exception(result.getStatus().getStatusMessage()));
             }
-
         }
     }
 
-    private AuthResponse createProviderResponse(GoogleSignInAccount account) {
-        AuthResponse response = AuthResponse.Builder.create()
-                .setToken(account.getIdToken())
-                .setProviderId(getProviderId())
+    private UserResult createUserResult(GoogleSignInAccount account) {
+        UserResult result = UserResult.Builder.create()
+                .setProvideData(getProviderId())
                 .setEmail(account.getEmail())
                 .setName(account.getDisplayName())
                 .setPhotoUrl(account.getPhotoUrl().getPath())
-                .setSuccessful(true)
                 .build();
-        return response;
+        return result;
     }
 
     @Override

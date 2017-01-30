@@ -17,6 +17,7 @@ import com.facebook.login.LoginResult;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.rogerio.tex.swaply.OnCompleteListener;
+import com.rogerio.tex.swaply.TaskResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +36,7 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
     private AppCompatActivity activity;
 
 
-    public FacebookProvider(AppCompatActivity activity, OnCompleteListener<ProviderResult> listener) {
+    public FacebookProvider(AppCompatActivity activity, OnCompleteListener<TaskResult<UserResult>> listener) {
         super(activity, listener);
         this.activity = activity;
         initFacebook();
@@ -75,33 +76,28 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
         GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
+
                 if (response.getError() != null) {
-                    authCallback.onFailure(new Bundle());
-                    return;
-                }
-                if (object == null) {
-                    authCallback.onFailure(new Bundle());
+                    finish(response.getError().getException());
+                } else if (object == null) {
+                    Exception exception = new IllegalStateException("Facebook data response is null");
+                    finish(exception);
                 } else {
                     try {
                         String email = object.getString("email");
                         String name = object.getString("name");
                         String picture = object.getString("picture");
-                        AuthResponse authResponse = AuthResponse.Builder.create()
-                                .setToken(loginResult.getAccessToken().getToken())
-                                .setProviderId(getProviderId())
-                                .setSuccessful(true)
+                        UserResult user = UserResult.Builder.create()
                                 .setEmail(email)
                                 .setName(name)
                                 .setPhotoUrl(picture)
+                                .setProvideData(getProviderId())
                                 .build();
-
-                        authCallback.onSuccess(authResponse);
-                    } catch (JSONException e) {
-                        authCallback.onFailure(new Bundle());
+                        finish(user);
+                    } catch (JSONException exception) {
+                        finish(exception);
                     }
                 }
-
-
             }
         });
         Bundle parameters = new Bundle();
@@ -111,16 +107,31 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
 
     }
 
+    private TaskResult<UserResult> createTaskResult(UserResult result) {
+        TaskResult<UserResult> task = TaskResult.Builder.create()
+                .setResult(result)
+                .setSuccessful(true)
+                .build();
+        return task;
+    }
+
+    private TaskResult<UserResult> createTaskResult(Exception e) {
+        TaskResult<UserResult> task = TaskResult.Builder.create()
+                .setException(e)
+                .setSuccessful(false)
+                .build();
+        return task;
+    }
+
     @Override
     public void onCancel() {
         Log.v(TAG, "Facebook login cancel");
-        finish();
     }
 
     @Override
     public void onError(FacebookException error) {
         Log.e(TAG, "Error facebook login", error);
-        finish();
+        finish(error);
     }
 
     @Override

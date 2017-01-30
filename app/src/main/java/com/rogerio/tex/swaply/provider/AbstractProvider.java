@@ -3,6 +3,8 @@ package com.rogerio.tex.swaply.provider;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.firebase.auth.AuthCredential;
 import com.rogerio.tex.swaply.OnCompleteListener;
@@ -14,9 +16,9 @@ import com.rogerio.tex.swaply.TaskResult;
 
 public abstract class AbstractProvider extends ContextWrapper {
 
-    protected OnCompleteListener<TaskResult<ProviderResult>> listener;
+    protected OnCompleteListener<TaskResult<UserResult>> listener;
 
-    public AbstractProvider(Context context, OnCompleteListener<TaskResult<ProviderResult>> listener) {
+    public AbstractProvider(Context context, OnCompleteListener<TaskResult<UserResult>> listener) {
         super(context);
         this.listener = listener;
     }
@@ -31,12 +33,27 @@ public abstract class AbstractProvider extends ContextWrapper {
 
     public abstract AuthCredential createAuthCredential(AuthResponse response);
 
-    protected void finish(ProviderResult result) {
+    protected void finish(@Nullable UserResult result, @Nullable Exception exception) {
         if (listener != null) {
-            TaskResult<ProviderResult> task = new TaskResult<>(true, result, null, false);
+            boolean successful = true;
+            if (exception != null) {
+                successful = false;
+            }
+            TaskResult<UserResult> task = TaskResult.Builder.create()
+                    .setResult(result)
+                    .setException(exception)
+                    .setSuccessful(successful)
+                    .build();
             listener.onComplete(task);
-
         }
+    }
+
+    protected void finish(@NonNull UserResult result) {
+        this.finish(result, null);
+    }
+
+    protected void finish(@NonNull Exception exception) {
+        this.finish(null, exception);
     }
 
 

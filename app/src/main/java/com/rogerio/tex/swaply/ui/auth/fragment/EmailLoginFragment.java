@@ -29,7 +29,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EmailLoginFragment extends EmailAuthFragment {
+public class EmailLoginFragment extends BaseEmaiFragment {
 
     private final static String TAG = "EmailLoginFragment";
 
