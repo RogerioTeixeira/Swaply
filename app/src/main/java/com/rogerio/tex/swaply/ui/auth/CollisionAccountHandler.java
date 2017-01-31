@@ -20,7 +20,8 @@ import com.google.firebase.auth.TwitterAuthProvider;
 import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
-import com.rogerio.tex.swaply.provider.AuthResponse;
+import com.rogerio.tex.swaply.TaskResult;
+import com.rogerio.tex.swaply.provider.UserResult;
 
 /**
  * Created by rogerio on 07/01/2017.
@@ -34,19 +35,19 @@ public class CollisionAccountHandler {
 
     }
 
-    public void show(final String email, final AppCompatActivity activity, @NonNull final OnCompleteListener<AuthResponse> listener) {
+    public void show(final String email, final AppCompatActivity activity, @NonNull final OnCompleteListener<TaskResult<UserResult>> listener) {
         show(email, activity.getSupportFragmentManager(), listener);
     }
 
-    public void show(final String email, final Fragment fragment, @NonNull final OnCompleteListener<AuthResponse> listener) {
+    public void show(final String email, final Fragment fragment, @NonNull final OnCompleteListener<TaskResult<UserResult>> listener) {
         show(email, fragment.getFragmentManager(), listener);
     }
 
-    public void show(final String email, final FragmentManager fm, @NonNull final OnCompleteListener<AuthResponse> listener) {
+    public void show(final String email, final FragmentManager fm, @NonNull final OnCompleteListener<TaskResult<UserResult>> listener) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.fetchProvidersForEmail(email)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Errore fetch provider"))
-                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener() {
+                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<ProviderQueryResult>() {
                     @Override
                     public void onComplete(@NonNull Task<ProviderQueryResult> task) {
                         if (task.isSuccessful()) {
@@ -56,11 +57,12 @@ public class CollisionAccountHandler {
                                     .show(fm, "DialogCollision");
 
                         } else {
-                            AuthResponse response = AuthResponse.Builder.create()
+                            TaskResult<UserResult> taskResult = TaskResult.Builder.create()
                                     .setSuccessful(false)
                                     .setException(task.getException())
                                     .build();
-                            listener.onComplete(response);
+
+                            listener.onComplete(taskResult);
                         }
                     }
                 });
@@ -71,7 +73,7 @@ public class CollisionAccountHandler {
         private final static String TAG = "DialogCollisionError";
         private static final String EMAIL_PARAM = "email";
         private static final String PROVIDER_PARAM = "provider_id";
-        private OnCompleteListener<AuthResponse> listener;
+        private OnCompleteListener<TaskResult<UserResult>> listener;
 
         public static DialogCollisionError Make(String email, String providerId) {
             DialogCollisionError fragment = new DialogCollisionError();
@@ -82,7 +84,7 @@ public class CollisionAccountHandler {
             return fragment;
         }
 
-        public DialogCollisionError setDialogClickListener(OnCompleteListener<AuthResponse> listener) {
+        public DialogCollisionError setDialogClickListener(OnCompleteListener<TaskResult<UserResult>> listener) {
             this.listener = listener;
             return this;
         }
@@ -119,12 +121,15 @@ public class CollisionAccountHandler {
                     .setPositiveButton("Accedi", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             if (listener != null) {
-                                AuthResponse response = AuthResponse.Builder.create()
-                                        .setProviderId(providerId)
-                                        .setSuccessful(true)
+                                UserResult user = UserResult.Builder.create()
                                         .setEmail(mail)
+                                        .setProvideData(providerId)
                                         .build();
-                                listener.onComplete(response);
+                                TaskResult<UserResult> task = TaskResult.Builder.create()
+                                        .setResult(user)
+                                        .setSuccessful(true)
+                                        .build();
+                                listener.onComplete(task);
                             }
                         }
                     })

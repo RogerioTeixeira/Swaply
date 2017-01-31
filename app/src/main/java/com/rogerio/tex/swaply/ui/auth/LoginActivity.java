@@ -8,7 +8,8 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -20,18 +21,17 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.provider.AbstractProvider;
-import com.rogerio.tex.swaply.provider.AuthResponse;
+import com.rogerio.tex.swaply.TaskResult;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
+import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.BaseActivity;
 import com.rogerio.tex.swaply.ui.MainActivity;
-import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 
-public class LoginActivity extends BaseActivity implements AbstractProvider.AuthCallback {
+public class LoginActivity extends BaseActivity implements OnCompleteListener<TaskResult<UserResult>> {
     public static final int REQUEST_CODE = 102;
     private static final String TAG = "LoginActivity";
     private static final String EXTRA_PARAM_ID = "EXTRA_AUTH_PARAM";
@@ -59,7 +59,7 @@ public class LoginActivity extends BaseActivity implements AbstractProvider.Auth
         activity.startActivity(intent);
     }
 
-    public static AuthResponse getResultData(Intent intent) {
+    public static UserResult getResultData(Intent intent) {
         return intent.getParcelableExtra(EXTRA_PARAM_ID);
     }
 
@@ -97,32 +97,30 @@ public class LoginActivity extends BaseActivity implements AbstractProvider.Auth
     }
 
     @Override
-    public void onSuccess(final AuthResponse response) {
-        AuthCredential authCredential = LoginProviderManager.createAuthCredential(response);
+    public void onComplete(TaskResult<UserResult> args) {
+        AuthCredential authCredential = LoginProviderManager.createAuthCredential(args.getResult());
+        final String email = args.getResult().getEmail();
         if (authCredential != null) {
             getActivityHelper().showLoadingDialog("");
             FirebaseAuth.getInstance().signInWithCredential(authCredential)
-                    .addOnCompleteListener(this, new com.google.android.gms.tasks.OnCompleteListener() {
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                task.
-                                finish();
-                            } else {
-                                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                    handlerUserCollisionException(response.getUser().getEmail());
-                                }
+                        public void onSuccess(AuthResult authResult) {
+                            checkAlreadyAuthenticated();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            if (e instanceof FirebaseAuthUserCollisionException) {
+                                handlerUserCollisionException(email);
                             }
                         }
                     });
         }
     }
 
-    @Override
-    public void onFailure(Bundle extra) {
-        getActivityHelper().dismissDialog();
 
-    }
 
     private void checkAlreadyAuthenticated() {
         if (getCallingActivity() != null) {
@@ -134,15 +132,14 @@ public class LoginActivity extends BaseActivity implements AbstractProvider.Auth
     }
 
     private void handlerUserCollisionException(String email) {
-        OnCompleteListener<AuthResponse> listener = new OnCompleteListener<AuthResponse>() {
+        OnCompleteListener<TaskResult<UserResult>> listener = new OnCompleteListener<TaskResult<UserResult>>() {
             @Override
-            public void onComplete(AuthResponse response) {
-                String providerId = response.getProviderId();
+            public void onComplete(TaskResult<UserResult> response) {
+                String providerId = response.getResult().getProvideData();
                 providerManager.startLogin(providerId, LoginActivity.this, LoginActivity.this);
             }
         };
-
-        CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(getActivityHelper());
+        CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler();
         collisionAccountHandler.show(email, getSupportFragmentManager(), listener);
 
     }
@@ -175,18 +172,5 @@ public class LoginActivity extends BaseActivity implements AbstractProvider.Auth
         finishAffinity();
     }
 
-
-    public static class FirebaseSignInHandler implements com.google.android.gms.tasks.OnCompleteListener {
-        private ActivityHelper helper;
-
-        public FirebaseSignInHandler(ActivityHelper helper) {
-            this.helper = helper;
-        }
-
-        @Override
-        public void onComplete(@NonNull Task<AuthResult> task) {
-
-        }
-    }
 
 }

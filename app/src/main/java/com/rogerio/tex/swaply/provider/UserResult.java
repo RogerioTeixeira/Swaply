@@ -23,12 +23,17 @@ public class UserResult implements Parcelable {
     private String email;
     private String photoUrl;
     private String provideData;
+    private String token;
+    private String secretKey;
 
-    public UserResult(String name, String email, String photoUrl, String provideData) {
+    public UserResult(String name, String email, String photoUrl, String provideData, String token, String secretKey) {
         this.name = name;
         this.email = email;
         this.photoUrl = photoUrl;
         this.provideData = provideData;
+        this.token = token;
+        this.secretKey = secretKey;
+
     }
 
     protected UserResult(Parcel in) {
@@ -36,6 +41,8 @@ public class UserResult implements Parcelable {
         this.email = in.readString();
         this.photoUrl = in.readString();
         this.provideData = in.readString();
+        this.token = in.readString();
+        this.secretKey = in.readString();
     }
 
     public String getName() {
@@ -54,6 +61,14 @@ public class UserResult implements Parcelable {
         return provideData;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -65,6 +80,8 @@ public class UserResult implements Parcelable {
         dest.writeString(this.email);
         dest.writeString(this.photoUrl);
         dest.writeString(this.provideData);
+        dest.writeString(this.token);
+        dest.writeString(this.secretKey);
     }
 
     public static class Builder {
@@ -72,6 +89,9 @@ public class UserResult implements Parcelable {
         private String email;
         private String photoUrl;
         private String provideData;
+        private String token;
+        private String secretKey;
+
 
         private Builder() {
 
@@ -101,8 +121,18 @@ public class UserResult implements Parcelable {
             return this;
         }
 
+        public Builder setToken(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public Builder setSecretKey(String secretKey) {
+            this.secretKey = secretKey;
+            return this;
+        }
+
         public UserResult build() {
-            return new UserResult(name, email, photoUrl, provideData);
+            return new UserResult(name, email, photoUrl, provideData, token, secretKey);
         }
     }
 }

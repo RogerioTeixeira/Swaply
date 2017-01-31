@@ -2,7 +2,6 @@ package com.rogerio.tex.swaply.provider;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthCredential;
@@ -40,12 +39,19 @@ public class EmailProvider extends AbstractProvider {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EmailAuthActivity.REQUEST_CODE) {
+            TaskResult<UserResult> task;
             if (resultCode == Activity.RESULT_OK) {
-                AuthResponse response = EmailAuthActivity.getResultData(data);
-                authCallback.onSuccess(response);
+                UserResult response = EmailAuthActivity.getResultData(data);
+                task = TaskResult.Builder.create()
+                        .setSuccessful(true)
+                        .setResult(response)
+                        .build();
             } else {
-                authCallback.onFailure(new Bundle());
+                task = TaskResult.Builder.create()
+                        .setSuccessful(false)
+                        .build();
             }
+            listener.onComplete(task);
         }
     }
 
@@ -55,7 +61,7 @@ public class EmailProvider extends AbstractProvider {
     }
 
     @Override
-    public AuthCredential createAuthCredential(AuthResponse response) {
+    public AuthCredential createAuthCredential(UserResult response) {
         return null;
     }
 }

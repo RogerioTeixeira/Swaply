@@ -25,7 +25,8 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
-import com.rogerio.tex.swaply.provider.AuthResponse;
+import com.rogerio.tex.swaply.TaskResult;
+import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.auth.CollisionAccountHandler;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
@@ -86,11 +87,10 @@ public class CreateAccountFragment extends BaseEmaiFragment {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        AuthResponse response = AuthResponse.Builder.create()
-                                .setProviderId(EmailAuthProvider.PROVIDER_ID)
+                        UserResult response = UserResult.Builder.create()
+                                .setProvideData(EmailAuthProvider.PROVIDER_ID)
                                 .setEmail(email)
                                 .setName(name)
-                                .setSuccessful(true)
                                 .build();
                         final FirebaseUser user = authResult.getUser();
                         updateUserProfile(user, response);
@@ -99,15 +99,15 @@ public class CreateAccountFragment extends BaseEmaiFragment {
                 });
     }
 
-    private void updateUserProfile(final FirebaseUser user, final AuthResponse response) {
-        String name = response.getUser().getName();
+    private void updateUserProfile(final FirebaseUser user, final UserResult response) {
+        String name = response.getName();
         Log.v("Updateprof", "Update name:" + name);
         UserProfileChangeRequest changeNameRequest = new UserProfileChangeRequest.Builder()
                 .setDisplayName(name)
                 .build();
         user.updateProfile(changeNameRequest)
                 .addOnFailureListener(new TaskFailureLogger(TAG, "Error update profile"))
-                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener() {
+                .addOnCompleteListener(new com.google.android.gms.tasks.OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
@@ -121,16 +121,16 @@ public class CreateAccountFragment extends BaseEmaiFragment {
     }
 
     private void handlerCollisionException(String email) {
-        CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler(getActivityHelper());
-        collisionAccountHandler.show(email, getFragmentManager(), new OnCompleteListener<AuthResponse>() {
+        CollisionAccountHandler collisionAccountHandler = new CollisionAccountHandler();
+        collisionAccountHandler.show(email, getFragmentManager(), new OnCompleteListener<TaskResult<UserResult>>() {
             @Override
-            public void onComplete(AuthResponse response) {
+            public void onComplete(TaskResult<UserResult> response) {
                 if (response.isSuccessful()) {
                     if (listener != null) {
-                        if (response.getProviderId().equalsIgnoreCase(EmailAuthProvider.PROVIDER_ID)) {
-                            listener.onExistingEmailUser(response);
+                        if (response.getResult().getProvideData().equalsIgnoreCase(EmailAuthProvider.PROVIDER_ID)) {
+                            listener.onExistingEmailUser(response.getResult());
                         } else {
-                            listener.onExistingIdpUser(response);
+                            listener.onExistingIdpUser(response.getResult());
                         }
                     }
                 } else {

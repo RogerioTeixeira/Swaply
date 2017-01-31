@@ -72,7 +72,7 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
 
     @Override
     public void onSuccess(final LoginResult loginResult) {
-        AccessToken accessToken = loginResult.getAccessToken();
+        final AccessToken accessToken = loginResult.getAccessToken();
         GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
@@ -90,6 +90,7 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
                         UserResult user = UserResult.Builder.create()
                                 .setEmail(email)
                                 .setName(name)
+                                .setToken(accessToken.getToken())
                                 .setPhotoUrl(picture)
                                 .setProvideData(getProviderId())
                                 .build();
@@ -135,7 +136,7 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
     }
 
     @Override
-    public AuthCredential createAuthCredential(AuthResponse response) {
+    public AuthCredential createAuthCredential(UserResult response) {
         return FacebookAuthProvider.getCredential(response.getToken());
     }
 

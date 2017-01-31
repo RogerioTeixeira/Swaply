@@ -3,10 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="192dp">
     <ImageView
+        android:id="@+id/image_sfondo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/sfondo" />
+
+    <FrameLayout
+        android:id="@+id/view_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00FF0000" />
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -36,8 +36,8 @@ public class LoginProviderManager {
         return new LoginProviderManager();
     }
 
-    public static AuthCredential createAuthCredential(AuthResponse response) {
-        String providerId = response.getProviderId();
+    public static AuthCredential createAuthCredential(UserResult response) {
+        String providerId = response.getProvideData();
         switch (providerId) {
             case FacebookAuthProvider.PROVIDER_ID:
                 return FacebookAuthProvider.getCredential(response.getToken());

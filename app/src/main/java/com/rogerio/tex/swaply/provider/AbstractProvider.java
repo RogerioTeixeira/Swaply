@@ -31,7 +31,7 @@ public abstract class AbstractProvider extends ContextWrapper {
 
     public abstract void startLogin();
 
-    public abstract AuthCredential createAuthCredential(AuthResponse response);
+    public abstract AuthCredential createAuthCredential(UserResult response);
 
     protected void finish(@Nullable UserResult result, @Nullable Exception exception) {
         if (listener != null) {

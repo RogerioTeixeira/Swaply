@@ -96,6 +96,8 @@ public class TwitterProvider extends AbstractProvider {
 
                 UserResult result = UserResult.Builder.create()
                         .setProvideData(getProviderId())
+                        .setToken(session.getAuthToken().token)
+                        .setSecretKey(session.getAuthToken().secret)
                         .setName(name)
                         .setPhotoUrl(photoUrlNormalSize)
                         .setProvideData(getProviderId())
@@ -113,7 +115,7 @@ public class TwitterProvider extends AbstractProvider {
     }
 
     @Override
-    public AuthCredential createAuthCredential(AuthResponse response) {
+    public AuthCredential createAuthCredential(UserResult response) {
         return TwitterAuthProvider.getCredential(response.getToken(), response.getSecretKey());
     }
 

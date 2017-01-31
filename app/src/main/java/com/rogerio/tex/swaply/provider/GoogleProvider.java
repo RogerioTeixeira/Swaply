@@ -77,6 +77,7 @@ public class GoogleProvider extends AbstractProvider implements GoogleApiClient.
     private UserResult createUserResult(GoogleSignInAccount account) {
         UserResult result = UserResult.Builder.create()
                 .setProvideData(getProviderId())
+                .setToken(account.getIdToken())
                 .setEmail(account.getEmail())
                 .setName(account.getDisplayName())
                 .setPhotoUrl(account.getPhotoUrl().getPath())
@@ -91,7 +92,7 @@ public class GoogleProvider extends AbstractProvider implements GoogleApiClient.
     }
 
     @Override
-    public AuthCredential createAuthCredential(AuthResponse response) {
+    public AuthCredential createAuthCredential(UserResult response) {
         return GoogleAuthProvider.getCredential(response.getToken(), null);
     }
 

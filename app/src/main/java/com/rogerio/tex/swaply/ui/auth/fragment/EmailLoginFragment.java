@@ -17,7 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
-import com.rogerio.tex.swaply.provider.AuthResponse;
+import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 
@@ -86,15 +86,12 @@ public class EmailLoginFragment extends BaseEmaiFragment {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        AuthResponse response = AuthResponse.Builder.create()
-                                .setSuccessful(true)
+                        UserResult response = UserResult.Builder.create()
                                 .setEmail(authResult.getUser().getEmail())
                                 .setName(authResult.getUser().getDisplayName())
-                                .setProviderId(EmailAuthProvider.PROVIDER_ID)
+                                .setProvideData(EmailAuthProvider.PROVIDER_ID)
                                 .build();
                         listener.succesLogin(response);
-
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

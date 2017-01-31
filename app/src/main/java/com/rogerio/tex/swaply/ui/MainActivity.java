@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.rogerio.tex.swaply.R;
-import com.rogerio.tex.swaply.provider.AuthResponse;
+import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.auth.LoginActivity;
 
 import butterknife.BindView;
@@ -42,11 +43,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private CircleImageView imageProfile;
+    private ImageView imageSfondo;
     private TextView nameProfile;
     private TextView emailProfile;
 
 
-    public static void startActivity(Activity activity, AuthResponse response) {
+    public static void startActivity(Activity activity, UserResult response) {
         Intent intent = new Intent(activity, MainActivity.class);
         intent.putExtra(EXTRA_PARAM_ID, response);
         activity.startActivity(intent);
@@ -69,6 +71,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         initNavigationDrawer();
         View header = navigationView.getHeaderView(0);
         imageProfile = (CircleImageView) header.findViewById(R.id.image_profile);
+        imageSfondo = (ImageView) header.findViewById(R.id.image_sfondo);
         emailProfile = (TextView) header.findViewById(R.id.email_profile);
         nameProfile = (TextView) header.findViewById(R.id.name_profile);
 
@@ -97,6 +100,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 .error(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageProfile);
+        Glide.with(this).
+                load(user.getPhotoUrl())
+                .centerCrop()
+                .error(R.drawable.sfondo)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageSfondo);
         emailProfile.setText(user.getEmail());
         nameProfile.setText(user.getDisplayName());
     }
