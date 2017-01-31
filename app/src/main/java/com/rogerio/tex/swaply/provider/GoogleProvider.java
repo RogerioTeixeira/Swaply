@@ -80,7 +80,7 @@ public class GoogleProvider extends AbstractProvider implements GoogleApiClient.
                 .setToken(account.getIdToken())
                 .setEmail(account.getEmail())
                 .setName(account.getDisplayName())
-                .setPhotoUrl(account.getPhotoUrl().getPath())
+                .setPhotoUrl(account.getPhotoUrl().toString())
                 .build();
         return result;
     }

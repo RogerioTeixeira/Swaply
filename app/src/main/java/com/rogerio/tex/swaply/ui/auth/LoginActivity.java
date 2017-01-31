@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -19,9 +20,15 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskResult;
+import com.rogerio.tex.swaply.helper.ProfileHelper;
+import com.rogerio.tex.swaply.helper.firebase.FirebaseHelper;
+import com.rogerio.tex.swaply.helper.model.UserProfile;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.BaseActivity;
@@ -99,21 +106,21 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
     @Override
     public void onComplete(TaskResult<UserResult> args) {
         AuthCredential authCredential = LoginProviderManager.createAuthCredential(args.getResult());
-        final String email = args.getResult().getEmail();
+        final UserResult result = args.getResult();
         if (authCredential != null) {
             getActivityHelper().showLoadingDialog("");
             FirebaseAuth.getInstance().signInWithCredential(authCredential)
                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-                            checkAlreadyAuthenticated();
+                            checkAlreadyAuthenticated(authResult.getUser().getUid(), result);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             if (e instanceof FirebaseAuthUserCollisionException) {
-                                handlerUserCollisionException(email);
+                                handlerUserCollisionException(result.getEmail());
                             }
                         }
                     });
@@ -121,8 +128,32 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
     }
 
 
+    private void checkAlreadyAuthenticated(final String uid, final UserResult result) {
+        final FirebaseHelper firebaseHelper = FirebaseHelper.getInstance();
+        firebaseHelper.getUserReferences(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Log.v("Firebaseprof", dataSnapshot.getValue().toString());
 
-    private void checkAlreadyAuthenticated() {
+                } else {
+                    ProfileHelper profile = ProfileHelper.getInstance();
+                    UserProfile userProfile = profile.createUserProfileFromUserResult(result);
+                    Log.v("FirebaseprofVal", userProfile.getPhotoUrl());
+                    profile.updateProfile(userProfile, uid);
+                }
+                finishLogin();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void finishLogin() {
         if (getCallingActivity() != null) {
             Intent intent = new Intent();
             getActivityHelper().finishActivity(Activity.RESULT_OK, intent);

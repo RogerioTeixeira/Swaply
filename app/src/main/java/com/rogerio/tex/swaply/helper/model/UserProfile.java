@@ -1,7 +1,8 @@
-package com.rogerio.tex.swaply.firebase.model;
+package com.rogerio.tex.swaply.helper.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,13 +13,16 @@ public class UserProfile {
     public String email;
     public String name;
     public String photoUrl;
-    Map<String, Boolean> contacts;
+    Map<String, Boolean> wishList;
 
-    public UserProfile(String email, String name, String photoUrl, Map<String, Boolean> contacts) {
+    public UserProfile(String email, String name, String photoUrl, Map<String, Boolean> wishList) {
         this.email = email;
         this.name = name;
         this.photoUrl = photoUrl;
-        this.contacts = contacts;
+        this.wishList = wishList;
+    }
+
+    public UserProfile() {
     }
 
     public String getEmail() {
@@ -45,11 +49,19 @@ public class UserProfile {
         this.photoUrl = photoUrl;
     }
 
-    public Map<String, Boolean> getContacts() {
-        return contacts;
+    public Map<String, Boolean> getwishList() {
+        return this.wishList;
     }
 
-    public void setContacts(Map<String, Boolean> contacts) {
-        this.contacts = contacts;
+    public void setwishList(Map<String, Boolean> contacts) {
+        this.wishList = contacts;
     }
+
+    public void AddItemWishList(String wishList, Boolean bool) {
+        if (this.wishList == null) {
+            this.wishList = new HashMap<>();
+        }
+        this.wishList.put(wishList, bool);
+    }
+
 }

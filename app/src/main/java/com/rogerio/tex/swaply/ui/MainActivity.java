@@ -100,12 +100,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 .error(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageProfile);
-        Glide.with(this).
-                load(user.getPhotoUrl())
-                .centerCrop()
-                .error(R.drawable.sfondo)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageSfondo);
         emailProfile.setText(user.getEmail());
         nameProfile.setText(user.getDisplayName());
     }

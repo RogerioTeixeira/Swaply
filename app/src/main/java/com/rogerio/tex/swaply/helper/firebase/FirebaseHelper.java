@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.firebase.helper;
+package com.rogerio.tex.swaply.helper.firebase;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -7,7 +7,6 @@ import com.google.firebase.database.FirebaseDatabase;
  * Created by rogerio on 26/01/2017.
  */
 public class FirebaseHelper {
-    private final static String USERS_PATH = "users";
     private static FirebaseHelper ourInstance;
     private DatabaseReference dataReference;
 
@@ -22,8 +21,8 @@ public class FirebaseHelper {
         return ourInstance;
     }
 
-    public DatabaseReference getUserReferences(String uid) {
-        return dataReference.getRoot().child(USERS_PATH).child(uid);
+    public DatabaseReference getReferences(String path) {
+        return dataReference.getRoot().child(path);
     }
 
 
