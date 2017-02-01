@@ -1,5 +1,8 @@
 package com.rogerio.tex.swaply.helper;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.rogerio.tex.swaply.helper.firebase.FirebaseHelper;
 import com.rogerio.tex.swaply.helper.model.UserProfile;
 import com.rogerio.tex.swaply.provider.UserResult;
@@ -37,5 +40,22 @@ public class ProfileHelper {
     public void updateProfile(UserResult result, String uid) {
         UserProfile profile = createUserProfileFromUserResult(result);
         updateProfile(profile, uid);
+    }
+
+    public DatabaseReference getMyProfile() {
+        FirebaseUser user = getMyFirebaseUser();
+        if (user != null) {
+            return getProfile(user.getUid());
+        }
+
+        return null;
+    }
+
+    public DatabaseReference getProfile(String uid) {
+        return firebaseHelper.getReferences(USERS_PROFILE).child(uid);
+    }
+
+    public FirebaseUser getMyFirebaseUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
     }
 }

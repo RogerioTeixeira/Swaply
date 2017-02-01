@@ -86,7 +86,7 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
                     try {
                         String email = object.getString("email");
                         String name = object.getString("name");
-                        String picture = object.getString("picture");
+                        String picture = object.getJSONObject("picture").getJSONObject("data").getString("url");
                         UserResult user = UserResult.Builder.create()
                                 .setEmail(email)
                                 .setName(name)
