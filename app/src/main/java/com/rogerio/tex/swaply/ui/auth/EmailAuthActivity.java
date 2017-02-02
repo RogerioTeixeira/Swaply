@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,15 +13,13 @@ import android.widget.Toast;
 import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskResult;
+import com.rogerio.tex.swaply.adapter.ViewPagerAdapter;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.BaseActivity;
 import com.rogerio.tex.swaply.ui.auth.fragment.BaseEmaiFragment;
 import com.rogerio.tex.swaply.ui.auth.fragment.CreateAccountFragment;
 import com.rogerio.tex.swaply.ui.auth.fragment.EmailLoginFragment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -144,35 +139,5 @@ public class EmailAuthActivity extends BaseActivity implements BaseEmaiFragment.
     public void onDestroy() {
         super.onDestroy();
         providerManager.onStop();
-    }
-
-    public static class ViewPagerAdapter extends FragmentStatePagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
     }
 }

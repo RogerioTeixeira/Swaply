@@ -54,6 +54,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private DatabaseReference refDatabase;
     private ProfileHelper profileHelper;
     private ValueEventListener valueEventListener;
+    private UserProfile profile;
 
 
     public static void startActivity(Activity activity, UserResult response) {
@@ -79,6 +80,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         initNavigationDrawer();
         View header = navigationView.getHeaderView(0);
         imageProfile = (CircleImageView) header.findViewById(R.id.image_profile);
+        imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProfileActivity.startActivity(MainActivity.this, profile);
+            }
+        });
+
         imageSfondo = (ImageView) header.findViewById(R.id.image_sfondo);
         emailProfile = (TextView) header.findViewById(R.id.email_profile);
         nameProfile = (TextView) header.findViewById(R.id.name_profile);
@@ -93,8 +101,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 if (!dataSnapshot.exists()) {
                     LoginActivity.startActivity(MainActivity.this);
                 } else {
-                    UserProfile prof = dataSnapshot.getValue(UserProfile.class);
-                    updateNavigationHeader(prof);
+                    profile = dataSnapshot.getValue(UserProfile.class);
+                    updateNavigationHeader(profile);
                 }
             }
 

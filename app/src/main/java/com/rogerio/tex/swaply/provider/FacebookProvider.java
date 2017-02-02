@@ -84,6 +84,7 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
                     finish(exception);
                 } else {
                     try {
+                        Log.v("JsonStub", object.toString());
                         String email = object.getString("email");
                         String name = object.getString("name");
                         String picture = object.getJSONObject("picture").getJSONObject("data").getString("url");
@@ -102,7 +103,7 @@ public class FacebookProvider extends AbstractProvider implements FacebookCallba
             }
         });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,email,picture");
+        parameters.putString("fields", "id,name,email,picture.width(500).height(500)");
         request.setParameters(parameters);
         request.executeAsync();
 

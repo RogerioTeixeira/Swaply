@@ -75,12 +75,13 @@ public class GoogleProvider extends AbstractProvider implements GoogleApiClient.
     }
 
     private UserResult createUserResult(GoogleSignInAccount account) {
+        String url = account.getPhotoUrl().toString() + "?sz=500";
         UserResult result = UserResult.Builder.create()
                 .setProvideData(getProviderId())
                 .setToken(account.getIdToken())
                 .setEmail(account.getEmail())
                 .setName(account.getDisplayName())
-                .setPhotoUrl(account.getPhotoUrl().toString())
+                .setPhotoUrl(url)
                 .build();
         return result;
     }
