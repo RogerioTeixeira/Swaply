@@ -13,7 +13,7 @@ public class UserProfile {
     public String email;
     public String name;
     public String photoUrl;
-    Map<String, Boolean> wishList;
+    public Map<String, Boolean> wishList;
 
     public UserProfile(String email, String name, String photoUrl, Map<String, Boolean> wishList) {
         this.email = email;

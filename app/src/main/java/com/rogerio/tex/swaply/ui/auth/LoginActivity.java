@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,7 +24,8 @@ import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskResult;
@@ -113,7 +115,7 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-                            checkAlreadyAuthenticated(authResult.getUser().getUid(), result);
+                            checkAlreadyAuthenticated(result);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -128,36 +130,52 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
     }
 
 
-    private void checkAlreadyAuthenticated(final String uid, final UserResult result) {
+    private void checkAlreadyAuthenticated(final UserResult result) {
         final ProfileHelper profileHelper = ProfileHelper.getInstance();
         DatabaseReference ref = profileHelper.getMyProfile();
         ref.keepSynced(true);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.runTransaction(new Transaction.Handler() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    Log.v("Firebaseprof", dataSnapshot.getValue().toString());
-                } else {
-                    UserProfile userProfile = profileHelper.createUserProfileFromUserResult(result);
-                    profileHelper.updateProfile(userProfile, uid);
-                }
-                finishLogin();
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                return Transaction.success(mutableData);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onComplete(DatabaseError databaseError, boolean success, DataSnapshot dataSnapshot) {
+                if (!success) {
+                    getActivityHelper().dismissDialog();
+                    if (databaseError != null) {
+                        Toast.makeText(LoginActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG);
+                        Log.e(TAG, "Error transaction firebase", databaseError.toException());
+                    } else if (dataSnapshot == null) {
+                        Log.e(TAG, "Data snapshot is null");
+                    }
+                } else {
+                    if (dataSnapshot.exists()) {
+                        UserProfile profile = dataSnapshot.getValue(UserProfile.class);
+                        Log.v(TAG, "UserProfile" + "Name:" + profile.getName());
+                        Log.v(TAG, "UserProfile" + "Email:" + profile.getEmail());
+                        Log.v(TAG, "UserProfile" + "PhotoUrl:" + profile.getPhotoUrl());
+                    } else {
+                        Log.v(TAG, "update profile");
+                        profileHelper.updateMyProfile(result);
+                    }
+                    finishLogin();
+                }
             }
         });
-
     }
 
     public void finishLogin() {
+        Log.v(TAG, "UserProfile finish");
         if (getCallingActivity() != null) {
+            Log.v(TAG, "UserProfile call");
             Intent intent = new Intent();
             getActivityHelper().finishActivity(Activity.RESULT_OK, intent);
         } else {
+            Log.v(TAG, "UserProfile start");
             MainActivity.startActivity(this);
+            finish();
         }
     }
 

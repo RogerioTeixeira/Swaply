@@ -3,6 +3,7 @@ package com.rogerio.tex.swaply.helper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ServerValue;
 import com.rogerio.tex.swaply.helper.firebase.FirebaseHelper;
 import com.rogerio.tex.swaply.helper.model.UserProfile;
 import com.rogerio.tex.swaply.provider.UserResult;
@@ -12,6 +13,7 @@ import com.rogerio.tex.swaply.provider.UserResult;
  */
 public class ProfileHelper {
     private final static String USERS_PROFILE = "users_profiles";
+    private final static String USERS_PROFILE_TIME_VAR = "timeVar";
     private static ProfileHelper ourInstance;
     private FirebaseHelper firebaseHelper;
 
@@ -34,7 +36,9 @@ public class ProfileHelper {
     }
 
     public void updateProfile(UserProfile user, String uid) {
-        firebaseHelper.getReferences(USERS_PROFILE).child(uid).setValue(user);
+        DatabaseReference ref = firebaseHelper.getReferences(USERS_PROFILE).child(uid);
+        ref.setValue(user);
+        ref.child(USERS_PROFILE_TIME_VAR).setValue(ServerValue.TIMESTAMP);
     }
 
     public void updateProfile(UserResult result, String uid) {
@@ -57,5 +61,15 @@ public class ProfileHelper {
 
     public FirebaseUser getMyFirebaseUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public void updateMyProfile(UserResult result) {
+        UserProfile profile = createUserProfileFromUserResult(result);
+        updateMyProfile(profile);
+    }
+
+    public void updateMyProfile(UserProfile profile) {
+        String uid = getMyFirebaseUser().getUid();
+        updateProfile(profile, uid);
     }
 }

@@ -4,7 +4,6 @@ package com.rogerio.tex.swaply.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,8 +19,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.rogerio.tex.swaply.R;
+import com.rogerio.tex.swaply.helper.ProfileHelper;
+import com.rogerio.tex.swaply.helper.model.UserProfile;
 import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.auth.LoginActivity;
 
@@ -32,6 +36,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String EXTRA_PARAM_ID = "EXTRA_PARAM";
+    public static final String TAG = "MainActivity";
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.fragment_container)
@@ -40,12 +46,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     NavigationView navigationView;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private CircleImageView imageProfile;
     private ImageView imageSfondo;
     private TextView nameProfile;
     private TextView emailProfile;
+    private DatabaseReference refDatabase;
+    private ProfileHelper profileHelper;
+    private ValueEventListener valueEventListener;
 
 
     public static void startActivity(Activity activity, UserResult response) {
@@ -75,49 +83,53 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         emailProfile = (TextView) header.findViewById(R.id.email_profile);
         nameProfile = (TextView) header.findViewById(R.id.name_profile);
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        profileHelper = ProfileHelper.getInstance();
+        refDatabase = profileHelper.getMyProfile();
 
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                Log.v("UserProf", "onAuthState:" + user);
-                if (user == null) {
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.v(TAG, "CambioDati");
+                if (!dataSnapshot.exists()) {
                     LoginActivity.startActivity(MainActivity.this);
                 } else {
-                    updateNavigationHeader(user);
+                    UserProfile prof = dataSnapshot.getValue(UserProfile.class);
+                    updateNavigationHeader(prof);
                 }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Error read profile", databaseError.toException());
             }
         };
     }
 
-    private void updateNavigationHeader(FirebaseUser user) {
-        Log.v("userProfile", "PhotoUrl:" + user.getPhotoUrl());
-        Glide.with(this).
-                load(user.getPhotoUrl())
+    private void updateNavigationHeader(UserProfile prof) {
+        Glide.with(MainActivity.this).
+                load(prof.getPhotoUrl())
                 .centerCrop()
                 .error(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageProfile);
-        emailProfile.setText(user.getEmail());
-        nameProfile.setText(user.getDisplayName());
+        emailProfile.setText(prof.getEmail());
+        nameProfile.setText(prof.getName());
     }
-
 
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        Log.v(TAG, "FirebaseListener attach");
+        refDatabase.addValueEventListener(valueEventListener);
+
     }
 
     @Override
 
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
+        Log.v(TAG, "FirebaseListener detach");
+        refDatabase.removeEventListener(valueEventListener);
     }
 
     public void initNavigationDrawer() {
@@ -132,6 +144,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (menuItem.getItemId()) {
             case R.id.menu_exit:
                 getActivityHelper().getFirebaseAuth().signOut();
+                LoginActivity.startActivity(MainActivity.this);
                 break;
         }
         return true;
