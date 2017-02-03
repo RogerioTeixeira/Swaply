@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -21,6 +22,9 @@ import butterknife.BindView;
 
 public class ProfileActivity extends BaseActivity {
 
+    private static final String PARAM_EXTRA = "userProfile";
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.appbarlayout)
@@ -33,12 +37,11 @@ public class ProfileActivity extends BaseActivity {
     CoordinatorLayout activityEmailAuth;
     @BindView(R.id.image_profile)
     ImageView imageProfile;
+    private UserProfile userProfile;
 
     public static void startActivity(Activity activity, UserProfile profile) {
         Intent intent = new Intent(activity, ProfileActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("url", profile.getPhotoUrl());
-        intent.putExtras(bundle);
+        intent.putExtra(PARAM_EXTRA, profile);
         activity.startActivity(intent);
     }
 
@@ -46,19 +49,18 @@ public class ProfileActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Prova");
-        String url = getIntent().getExtras().getString("url");
-        Glide.with(this).
-                load(url)
-                .centerCrop()
-                .error(R.drawable.com_facebook_profile_picture_blank_portrait)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageProfile);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        userProfile = getIntent().getParcelableExtra(PARAM_EXTRA);
+        if (userProfile != null) {
+            collapsingToolbar.setTitle(userProfile.getName());
+            loadProfileData();
+        }
 
 
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(WishListFragment.newInstance("a", "b"), getResources().getString(R.string.title_toolbar_login));
-        adapter.addFragment(WishListFragment.newInstance("a", "b"), getResources().getString(R.string.title_toolbar_create));
+        adapter.addFragment(WishListFragment.newInstance("a", "b"), getResources().getString(R.string.title_wishlist));
+        adapter.addFragment(WishListFragment.newInstance("a", "b"), getResources().getString(R.string.title_friends));
         pager.setAdapter(adapter);
         tablayout.setupWithViewPager(pager);
         tablayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager) {
@@ -67,6 +69,15 @@ public class ProfileActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void loadProfileData() {
+        Glide.with(this).
+                load(userProfile.getPhotoUrl())
+                .centerCrop()
+                .error(R.drawable.com_facebook_profile_picture_blank_portrait)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageProfile);
     }
 
     @Override

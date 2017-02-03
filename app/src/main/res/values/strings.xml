@@ -15,6 +15,8 @@
 
     <string name="title_toolbar_create">Crea nuovo account</string>
     <string name="title_toolbar_login">Accedi</string>
+    <string name="title_wishlist">Lista regali</string>
+    <string name="title_friends">Amici</string>
 
     <string name="button_login">Accedi</string>
     <string name="button_create">Registrati</string>
