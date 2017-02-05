@@ -3,8 +3,12 @@ package com.rogerio.tex.swaply.ui.auth;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +42,11 @@ import com.rogerio.tex.swaply.ui.MainActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.ACCESS_NETWORK_STATE;
+import static android.Manifest.permission.ACCESS_WIFI_STATE;
 
 
 public class LoginActivity extends BaseActivity implements OnCompleteListener<TaskResult<UserResult>> {
@@ -76,6 +85,7 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         providerManager = LoginProviderManager.createInstance();
+
     }
 
     @Override
@@ -91,6 +101,7 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
     @Override
     public void onStart() {
         super.onStart();
+        checkPermissionLacation();
     }
 
     @Override
@@ -193,7 +204,6 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
     }
 
 
-
     @OnClick({R.id.sign_in_button_facebook, R.id.sign_in_button_twitter, R.id.sign_in_button_google, R.id.button_skip, R.id.sign_in_button_email})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -218,6 +228,20 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
     @Override
     public void onBackPressed() {
         finishAffinity();
+    }
+
+    public void checkPermissionLacation() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            Log.v("Verifica permesso", "permesso");
+            if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+                Log.v("Verifica permesso", "permesso 2");
+                String[] permission = new String[]{ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE};
+                ActivityCompat.requestPermissions(this, permission, 201);
+            }
+        }
     }
 
 
