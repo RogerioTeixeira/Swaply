@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,7 +35,7 @@ import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskResult;
 import com.rogerio.tex.swaply.helper.ProfileHelper;
-import com.rogerio.tex.swaply.helper.model.UserProfile;
+import com.rogerio.tex.swaply.model.UserProfile;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.BaseActivity;
@@ -168,8 +169,14 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
                         Log.v(TAG, "UserProfile" + "Email:" + profile.getEmail());
                         Log.v(TAG, "UserProfile" + "PhotoUrl:" + profile.getPhotoUrl());
                     } else {
-                        Log.v(TAG, "update profile");
-                        profileHelper.updateMyProfile(result);
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.setName(result.getName());
+                        userProfile.setEmail(result.getEmail());
+                        userProfile.setPhotoUrl(result.getPhotoUrl());
+                        TelephonyManager mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                        String localeCountry = mTelephonyManager.getNetworkCountryIso();
+                        userProfile.setCountry(localeCountry);
+                        profileHelper.updateMyProfile(userProfile);
                     }
                     finishLogin();
                 }
@@ -178,13 +185,11 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
     }
 
     public void finishLogin() {
-        Log.v(TAG, "UserProfile finish");
         if (getCallingActivity() != null) {
             Log.v(TAG, "UserProfile call");
             Intent intent = new Intent();
             getActivityHelper().finishActivity(Activity.RESULT_OK, intent);
         } else {
-            Log.v(TAG, "UserProfile start");
             MainActivity.startActivity(this);
             finish();
         }
@@ -232,12 +237,10 @@ public class LoginActivity extends BaseActivity implements OnCompleteListener<Ta
 
     public void checkPermissionLacation() {
         if (Build.VERSION.SDK_INT >= 23) {
-            Log.v("Verifica permesso", "permesso");
             if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
-                Log.v("Verifica permesso", "permesso 2");
                 String[] permission = new String[]{ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE};
                 ActivityCompat.requestPermissions(this, permission, 201);
             }

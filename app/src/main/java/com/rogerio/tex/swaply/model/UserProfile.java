@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.helper.model;
+package com.rogerio.tex.swaply.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -29,13 +29,17 @@ public class UserProfile implements Parcelable {
     public String email;
     public String name;
     public String photoUrl;
+    public String country;
+    public String city;
     public Map<String, Boolean> wishList;
     public Map<String, Boolean> friendsList;
 
-    public UserProfile(String email, String name, String photoUrl, Map<String, Boolean> wishList, Map<String, Boolean> friendsList) {
+    public UserProfile(String email, String name, String photoUrl, String country, String city, Map<String, Boolean> wishList, Map<String, Boolean> friendsList) {
         this.email = email;
         this.name = name;
         this.photoUrl = photoUrl;
+        this.country = country;
+        this.city = city;
         this.wishList = wishList;
         this.friendsList = friendsList;
     }
@@ -47,6 +51,8 @@ public class UserProfile implements Parcelable {
         this.email = in.readString();
         this.name = in.readString();
         this.photoUrl = in.readString();
+        this.city = in.readString();
+        this.country = in.readString();
         if (in.readByte() == IS_NO_NULL) {
             int wishListSize = in.readInt();
             this.wishList = new HashMap<String, Boolean>(wishListSize);
@@ -66,6 +72,22 @@ public class UserProfile implements Parcelable {
             }
         }
 
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getEmail() {
@@ -92,11 +114,11 @@ public class UserProfile implements Parcelable {
         this.photoUrl = photoUrl;
     }
 
-    public Map<String, Boolean> getwishList() {
-        return this.wishList;
+    public Map<String, Boolean> getWishList() {
+        return wishList;
     }
 
-    public void setwishList(Map<String, Boolean> wishList) {
+    public void setWishList(Map<String, Boolean> wishList) {
         this.wishList = wishList;
     }
 
@@ -132,6 +154,8 @@ public class UserProfile implements Parcelable {
         dest.writeString(this.email);
         dest.writeString(this.name);
         dest.writeString(this.photoUrl);
+        dest.writeString(this.city);
+        dest.writeString(this.country);
         if (this.wishList == null) {
             dest.writeByte(IS_NULL);
         } else {

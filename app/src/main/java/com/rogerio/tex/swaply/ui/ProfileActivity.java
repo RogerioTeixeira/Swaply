@@ -3,12 +3,7 @@ package com.rogerio.tex.swaply.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -17,8 +12,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,15 +19,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.adapter.ViewPagerAdapter;
-import com.rogerio.tex.swaply.helper.model.UserProfile;
+import com.rogerio.tex.swaply.model.UserProfile;
 
-import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -43,7 +31,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileActivity extends BaseActivity {
 
     private static final String PARAM_EXTRA = "userProfile";
-    private static final int PERCENTAGE_TO_ANIMATE_AVATAR = 20;
+    private static final int PERCENTAGE_TO_ANIMATE_AVATAR = 40;
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbar;
     @BindView(R.id.toolbar)
@@ -64,6 +52,8 @@ public class ProfileActivity extends BaseActivity {
     TextView textName;
     @BindView(R.id.scroll)
     NestedScrollView scroll;
+    @BindView(R.id.text_location)
+    TextView textLocation;
     private int maxScrollSize;
     private boolean isAvatarShown = true;
     private UserProfile userProfile;
@@ -110,96 +100,6 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
-        GoogleApiClient mGoogleApiClient = new GoogleApiClient
-                .Builder(this)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.v("Prova", "errore");
-                    }
-                })
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-                        Log.v("Prova", "connesione ok");
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int i) {
-
-                    }
-                })
-                .build();
-        imageProfileCircle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                try {
-                    Log.v("Prova", "Prima del lancio");
-                    startActivityForResult(builder.build(ProfileActivity.this), 20);
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                }
-            }
-        });
-
-
-        // Start the Intent by requesting a result, identified by a request code.
-
-
-        TelephonyManager mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        String localeCountry = mTelephonyManager.getNetworkCountryIso();
-        if (localeCountry != null) {
-            Locale loc = new Locale("", localeCountry);
-            Log.d("locationManager", "User is from " + loc.getDisplayCountry());
-        }
-        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    Log.v("locationManager", "onLocationChanged");
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                    Log.v("locationManager", "onStatusChanged");
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                    Log.v("locationManager", "onProviderEnabled");
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                    Log.v("locationManager", "onProviderDisabled");
-                }
-            });
-        } catch (SecurityException e) {
-            Log.e("LocationError", "Errore autorizzazione", e);
-        }
-        List<String> matchingProviders = locationManager.getAllProviders();
-        for (String provider : matchingProviders) {
-            try {
-                Location location = locationManager.getLastKnownLocation(provider);
-                Log.v("Location", "provider:" + provider);
-                if (location != null) {
-                    Log.v("Location", "risultato long:" + location.getLongitude());
-                    Log.v("Location", "risultato lat:" + location.getLatitude());
-                }
-            } catch (SecurityException e) {
-                Log.e("LocationError", "Errore autorizzazione", e);
-            }
-
-        }
-        Log.v("Paese", "Country1:" + matchingProviders.toString());
-
-        Log.v("Paese", "Country:" + mTelephonyManager.getNetworkCountryIso());
-
         userProfile = getIntent().getParcelableExtra(PARAM_EXTRA);
         if (userProfile != null) {
             loadProfileData();
@@ -231,6 +131,14 @@ public class ProfileActivity extends BaseActivity {
 
     private void loadProfileData() {
         textName.setText(userProfile.getName());
+        if (userProfile.getCountry() != null) {
+            textLocation.setVisibility(View.VISIBLE);
+            Locale loc = new Locale("", userProfile.getCountry());
+            textLocation.setText(loc.getDisplayCountry());
+        } else {
+            textLocation.setVisibility(View.INVISIBLE);
+        }
+
         Glide.with(this).
                 load(userProfile.getPhotoUrl())
                 .centerCrop()

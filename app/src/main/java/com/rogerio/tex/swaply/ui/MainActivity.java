@@ -26,7 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.helper.ProfileHelper;
-import com.rogerio.tex.swaply.helper.model.UserProfile;
+import com.rogerio.tex.swaply.model.UserProfile;
 import com.rogerio.tex.swaply.provider.UserResult;
 import com.rogerio.tex.swaply.ui.auth.LoginActivity;
 

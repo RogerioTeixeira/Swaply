@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 import com.rogerio.tex.swaply.helper.firebase.FirebaseHelper;
-import com.rogerio.tex.swaply.helper.model.UserProfile;
+import com.rogerio.tex.swaply.model.UserProfile;
 import com.rogerio.tex.swaply.provider.UserResult;
 
 /**
