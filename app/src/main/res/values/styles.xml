@@ -65,7 +65,7 @@
 
     <style name="NavigationTab" parent="Widget.Design.TabLayout">
         <item name="tabMaxWidth">@dimen/tab_max_width</item>
-        <item name="tabIndicatorColor">?attr/colorAccent</item>
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
         <item name="tabSelectedTextColor">@color/colorPrimaryDark</item>
         <item name="tabIndicatorHeight">2dp</item>
         <item name="tabPaddingStart">12dp</item>
