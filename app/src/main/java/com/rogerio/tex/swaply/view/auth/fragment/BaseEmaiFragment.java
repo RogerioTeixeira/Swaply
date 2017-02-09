@@ -1,9 +1,9 @@
-package com.rogerio.tex.swaply.ui.auth.fragment;
+package com.rogerio.tex.swaply.view.auth.fragment;
 
 import android.content.Context;
 
 import com.rogerio.tex.swaply.provider.UserResult;
-import com.rogerio.tex.swaply.ui.BaseFragment;
+import com.rogerio.tex.swaply.view.BaseFragment;
 
 /**
  * Created by Rogerio Lavoro on 18/01/2017.

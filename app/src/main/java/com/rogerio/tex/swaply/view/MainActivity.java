@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui;
+package com.rogerio.tex.swaply.view;
 
 
 import android.app.Activity;
@@ -28,7 +28,7 @@ import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.helper.ProfileHelper;
 import com.rogerio.tex.swaply.model.UserProfile;
 import com.rogerio.tex.swaply.provider.UserResult;
-import com.rogerio.tex.swaply.ui.auth.LoginActivity;
+import com.rogerio.tex.swaply.view.auth.LoginActivity;
 
 import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;

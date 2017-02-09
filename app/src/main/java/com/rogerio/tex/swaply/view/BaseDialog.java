@@ -1,8 +1,8 @@
-package com.rogerio.tex.swaply.ui;
+package com.rogerio.tex.swaply.view;
 
 import android.support.v4.app.DialogFragment;
 
-import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
+import com.rogerio.tex.swaply.view.helper.ActivityHelper;
 
 /**
  * Created by rogerio on 06/01/2017.

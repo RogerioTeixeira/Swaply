@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    tools:context="com.rogerio.tex.swaply.ui.ProfileActivity">
+    tools:context="com.rogerio.tex.swaply.view.ProfileActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbarlayout"

@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui.helper;
+package com.rogerio.tex.swaply.view.helper;
 
 import android.app.Activity;
 import android.content.Intent;

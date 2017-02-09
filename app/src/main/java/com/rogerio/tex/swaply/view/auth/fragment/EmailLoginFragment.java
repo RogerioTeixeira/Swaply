@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui.auth.fragment;
+package com.rogerio.tex.swaply.view.auth.fragment;
 
 
 import android.os.Bundle;

@@ -27,7 +27,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".view.auth.LoginActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -42,19 +42,19 @@
             tools:replace="android:value" />
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".view.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"></activity>
         <activity
-            android:name=".ui.auth.EmailAuthActivity"
+            android:name=".view.auth.EmailAuthActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
-        <activity android:name=".ui.SplashActivity">
+        <activity android:name=".view.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ProfileActivity"></activity>
+        <activity android:name=".view.ProfileActivity"></activity>
     </application>
 
 </manifest>

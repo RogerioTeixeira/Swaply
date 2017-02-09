@@ -8,7 +8,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.rogerio.tex.swaply.OnCompleteListener;
 import com.rogerio.tex.swaply.TaskResult;
-import com.rogerio.tex.swaply.ui.auth.EmailAuthActivity;
+import com.rogerio.tex.swaply.view.auth.EmailAuthActivity;
 
 /**
  * Created by rogerio on 07/01/2017.

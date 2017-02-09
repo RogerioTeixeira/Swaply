@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui.auth;
+package com.rogerio.tex.swaply.view.auth;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,10 +16,10 @@ import com.rogerio.tex.swaply.TaskResult;
 import com.rogerio.tex.swaply.adapter.ViewPagerAdapter;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.provider.UserResult;
-import com.rogerio.tex.swaply.ui.BaseActivity;
-import com.rogerio.tex.swaply.ui.auth.fragment.BaseEmaiFragment;
-import com.rogerio.tex.swaply.ui.auth.fragment.CreateAccountFragment;
-import com.rogerio.tex.swaply.ui.auth.fragment.EmailLoginFragment;
+import com.rogerio.tex.swaply.view.BaseActivity;
+import com.rogerio.tex.swaply.view.auth.fragment.BaseEmaiFragment;
+import com.rogerio.tex.swaply.view.auth.fragment.CreateAccountFragment;
+import com.rogerio.tex.swaply.view.auth.fragment.EmailLoginFragment;
 
 import butterknife.BindView;
 

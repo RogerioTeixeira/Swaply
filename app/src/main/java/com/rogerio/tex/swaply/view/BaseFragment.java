@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui;
+package com.rogerio.tex.swaply.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rogerio.tex.swaply.ui.helper.ActivityHelper;
+import com.rogerio.tex.swaply.view.helper.ActivityHelper;
 
 import butterknife.ButterKnife;
 

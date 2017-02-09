@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui.auth.fragment;
+package com.rogerio.tex.swaply.view.auth.fragment;
 
 
 import android.os.Bundle;
@@ -27,7 +27,7 @@ import com.rogerio.tex.swaply.R;
 import com.rogerio.tex.swaply.TaskFailureLogger;
 import com.rogerio.tex.swaply.TaskResult;
 import com.rogerio.tex.swaply.provider.UserResult;
-import com.rogerio.tex.swaply.ui.auth.CollisionAccountHandler;
+import com.rogerio.tex.swaply.view.auth.CollisionAccountHandler;
 import com.rogerio.tex.validator.Form;
 import com.rogerio.tex.validator.FormValidationResult;
 

@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui.auth;
+package com.rogerio.tex.swaply.view.auth;
 
 import android.app.Dialog;
 import android.content.DialogInterface;

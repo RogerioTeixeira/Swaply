@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui;
+package com.rogerio.tex.swaply.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -6,7 +6,7 @@ import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.rogerio.tex.swaply.ui.auth.LoginActivity;
+import com.rogerio.tex.swaply.view.auth.LoginActivity;
 
 public class SplashActivity extends BaseActivity {
     private ImageView image;

@@ -1,4 +1,4 @@
-package com.rogerio.tex.swaply.ui.auth;
+package com.rogerio.tex.swaply.view.auth;
 
 
 import android.app.Activity;
@@ -38,8 +38,8 @@ import com.rogerio.tex.swaply.helper.ProfileHelper;
 import com.rogerio.tex.swaply.model.UserProfile;
 import com.rogerio.tex.swaply.provider.LoginProviderManager;
 import com.rogerio.tex.swaply.provider.UserResult;
-import com.rogerio.tex.swaply.ui.BaseActivity;
-import com.rogerio.tex.swaply.ui.MainActivity;
+import com.rogerio.tex.swaply.view.BaseActivity;
+import com.rogerio.tex.swaply.view.MainActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;

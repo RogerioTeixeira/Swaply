@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    tools:context="com.rogerio.tex.swaply.ui.auth.EmailAuthActivity">
+    tools:context="com.rogerio.tex.swaply.view.auth.EmailAuthActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbarlayout"
